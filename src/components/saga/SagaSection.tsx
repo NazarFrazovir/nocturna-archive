@@ -1,143 +1,328 @@
-import { useState } from 'react'
+import { useState, useCallback } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { sagaPremise, sagaActs, sagaThemes } from '../../data/saga'
+import {
+  sagaPremise,
+  sagaThemes,
+  sagaBooks,
+  getChaptersByBook,
+  getAdjacentChapters,
+} from '../../data/saga'
+import type { SagaBook, SagaChapter } from '../../data/saga'
 import { characters } from '../../data/characters'
 import { factions } from '../../data/factions'
 
-export function SagaSection() {
-  const [activeAct, setActiveAct] = useState(sagaActs[0].id)
+type SagaView = 'library' | 'toc' | 'read'
 
-  const act = sagaActs.find((a) => a.id === activeAct) ?? sagaActs[0]
+const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']
+
+function chapterLabel(ch: SagaChapter): string {
+  if (ch.type === 'prologue') return 'Пролог'
+  if (ch.type === 'epilogue') return 'Епілог'
+  return `Глава ${ROMAN[(ch.number ?? 1) - 1]}`
+}
+
+export function SagaSection() {
+  const [view, setView] = useState<SagaView>('library')
+  const [activeBook, setActiveBook] = useState<SagaBook | null>(null)
+  const [activeChapter, setActiveChapter] = useState<SagaChapter | null>(null)
+
+  const openBook = useCallback((book: SagaBook) => {
+    setActiveBook(book)
+    setView('toc')
+  }, [])
+
+  const openChapter = useCallback((chapter: SagaChapter) => {
+    setActiveChapter(chapter)
+    setView('read')
+  }, [])
+
+  const backToLibrary = useCallback(() => {
+    setView('library')
+    setActiveBook(null)
+    setActiveChapter(null)
+  }, [])
+
+  const backToToc = useCallback(() => {
+    setView('toc')
+    setActiveChapter(null)
+  }, [])
+
+  const adjacent = activeChapter ? getAdjacentChapters(activeChapter.id) : { prev: null, next: null }
 
   return (
     <section id="saga" className="relative px-6 py-24 md:py-32">
       <div className="absolute inset-0 bg-gradient-to-b from-void via-blood/5 to-void" />
       <div className="relative mx-auto max-w-6xl">
-        <h2 className="section-title">{sagaPremise.title}</h2>
-        <p className="section-subtitle">{sagaPremise.tagline}</p>
-
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="glass-panel mx-auto max-w-4xl rounded-xl p-8 md:p-10"
-        >
-          <p className="font-body text-lg leading-relaxed text-mist md:text-xl">{sagaPremise.intro}</p>
-          <blockquote className="mt-6 border-l-2 border-blood/40 pl-6 font-body text-base italic text-ember/80 md:text-lg">
-            {sagaPremise.centralConflict}
-          </blockquote>
-        </motion.div>
-
-        {/* Factions */}
-        <div className="mt-16">
-          <h3 className="mb-8 text-center font-heading text-sm tracking-[0.3em] text-mist/50">
-            ТРИ СИЛИ
-          </h3>
-          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
-            {factions.map((f, i) => (
-              <motion.div
-                key={f.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.08 }}
-                className="shimmer-border rounded-lg border border-ember/10 bg-obsidian/70 p-5"
-              >
-                <h4 className="font-heading text-lg text-ember">{f.name}</h4>
-                <p className="mt-2 font-body text-sm italic text-mist/60">{f.motto}</p>
-                <p className="mt-3 font-body text-sm leading-relaxed text-mist">{f.description}</p>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-
-        {/* Acts */}
-        <div className="mt-20">
-          <h3 className="mb-6 text-center font-heading text-sm tracking-[0.3em] text-mist/50">
-            ТРИ АКТИ
-          </h3>
-          <div className="flex flex-wrap justify-center gap-3">
-            {sagaActs.map((a) => (
-              <button
-                key={a.id}
-                type="button"
-                onClick={() => setActiveAct(a.id)}
-                className={`rounded border px-5 py-2 font-heading text-xs tracking-widest transition-all ${
-                  activeAct === a.id
-                    ? 'border-ember bg-ember/10 text-ember'
-                    : 'border-ember/20 text-mist/50 hover:border-ember/40 hover:text-mist'
-                }`}
-              >
-                АКТ {a.number}
-              </button>
-            ))}
-          </div>
-
-          <AnimatePresence mode="wait">
+        <AnimatePresence mode="wait">
+          {view === 'library' && (
             <motion.div
-              key={act.id}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              className="mt-8 rounded-xl border border-ember/10 bg-obsidian/50 p-8"
+              key="library"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
             >
-              <p className="font-heading text-xs tracking-widest text-blood">{act.subtitle}</p>
-              <h4 className="mt-2 font-heading text-2xl text-ember">{act.title}</h4>
-              <p className="mt-4 font-body text-lg leading-relaxed text-mist">{act.summary}</p>
-              <ul className="mt-6 space-y-3">
-                {act.events.map((event) => (
-                  <li key={event} className="flex gap-3 font-body text-base text-mist/80">
-                    <span className="mt-1.5 h-1.5 w-1.5 shrink-0 rotate-45 bg-ember/60" />
-                    {event}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          </AnimatePresence>
-        </div>
+              <h2 className="section-title">{sagaPremise.title}</h2>
+              <p className="section-subtitle">{sagaPremise.tagline}</p>
 
-        {/* Characters */}
-        <div className="mt-20">
-          <h3 className="mb-8 text-center font-heading text-sm tracking-[0.3em] text-mist/50">
-            ПЕРСОНАЖІ
-          </h3>
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {characters.map((c, i) => (
-              <motion.article
-                key={c.id}
+              <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="shimmer-border group rounded-lg border border-ember/10 bg-obsidian/80 p-6 transition-colors hover:border-ember/25"
+                className="saga-leather-cover mx-auto max-w-3xl rounded-xl p-8 md:p-12"
               >
-                <p className="font-heading text-[10px] tracking-widest text-mist/40">{c.role}</p>
-                <h4 className="mt-1 font-heading text-xl text-ember">{c.name}</h4>
-                <p className="font-heading text-xs tracking-wider text-mist/50">
-                  {c.title} · {c.realm}
-                </p>
-                <p className="mt-3 font-body text-sm leading-relaxed text-mist">{c.description}</p>
-                {c.quote && (
-                  <p className="mt-4 font-body text-sm italic text-ember/60 opacity-0 transition-opacity group-hover:opacity-100">
-                    {c.quote}
-                  </p>
-                )}
-              </motion.article>
-            ))}
-          </div>
-        </div>
+                <p className="saga-book-text text-lg leading-relaxed md:text-xl">{sagaPremise.intro}</p>
+                <blockquote className="mt-6 border-l-2 border-blood/40 pl-6 font-body text-base italic text-ember/80 md:text-lg">
+                  {sagaPremise.centralConflict}
+                </blockquote>
+              </motion.div>
 
-        {/* Themes */}
-        <div className="mt-16 flex flex-wrap justify-center gap-3">
-          {sagaThemes.map((theme) => (
-            <span
-              key={theme}
-              className="rounded-full border border-mist/15 px-4 py-1.5 font-body text-sm italic text-mist/50"
+              <div className="mt-16">
+                <h3 className="mb-8 text-center font-heading text-sm tracking-[0.3em] text-mist/50">
+                  ТРИ КНИГИ
+                </h3>
+                <div className="grid gap-6 md:grid-cols-3">
+                  {sagaBooks.map((book, i) => (
+                    <motion.button
+                      key={book.id}
+                      type="button"
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.1 }}
+                      onClick={() => openBook(book)}
+                      className="saga-book-spine group text-left"
+                    >
+                      <span className="font-heading text-[10px] tracking-[0.4em] text-mist/40">
+                        {book.subtitle.toUpperCase()}
+                      </span>
+                      <h4 className="mt-2 font-heading text-xl text-ember transition-colors group-hover:text-white md:text-2xl">
+                        {book.title}
+                      </h4>
+                      <p className="mt-3 font-body text-sm leading-relaxed text-mist/70">
+                        {book.summary}
+                      </p>
+                      <span className="mt-4 inline-block font-heading text-[10px] tracking-widest text-ember/60 transition-colors group-hover:text-ember">
+                        ВІДКРИТИ ЗМІСТ →
+                      </span>
+                    </motion.button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-20">
+                <h3 className="mb-8 text-center font-heading text-sm tracking-[0.3em] text-mist/50">
+                  ТРИ СИЛИ
+                </h3>
+                <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-4">
+                  {factions.map((f, i) => (
+                    <motion.div
+                      key={f.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.08 }}
+                      className="shimmer-border rounded-lg border border-ember/10 bg-obsidian/70 p-5"
+                    >
+                      <h4 className="font-heading text-lg text-ember">{f.name}</h4>
+                      <p className="mt-2 font-body text-sm italic text-mist/60">{f.motto}</p>
+                      <p className="mt-3 font-body text-sm leading-relaxed text-mist">{f.description}</p>
+                    </motion.div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-20">
+                <h3 className="mb-8 text-center font-heading text-sm tracking-[0.3em] text-mist/50">
+                  ПЕРСОНАЖІ
+                </h3>
+                <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
+                  {characters.map((c, i) => (
+                    <motion.article
+                      key={c.id}
+                      initial={{ opacity: 0, y: 20 }}
+                      whileInView={{ opacity: 1, y: 0 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: i * 0.04 }}
+                      className={`shimmer-border group rounded-lg border bg-obsidian/80 p-6 transition-colors hover:border-ember/25 ${
+                        c.appearsLate ? 'border-mist/10 opacity-80' : 'border-ember/10'
+                      }`}
+                    >
+                      <div className="flex items-center gap-2">
+                        <p className="font-heading text-[10px] tracking-widest text-mist/40">{c.role}</p>
+                        {c.isPov && (
+                          <span className="rounded border border-ember/20 px-1.5 py-0.5 font-heading text-[8px] tracking-wider text-ember/70">
+                            POV
+                          </span>
+                        )}
+                        {c.appearsLate && (
+                          <span className="rounded border border-mist/20 px-1.5 py-0.5 font-heading text-[8px] tracking-wider text-mist/50">
+                            КІНЕЦЬ
+                          </span>
+                        )}
+                      </div>
+                      <h4 className="mt-1 font-heading text-xl text-ember">{c.name}</h4>
+                      <p className="font-heading text-xs tracking-wider text-mist/50">
+                        {c.title} · {c.realm}
+                      </p>
+                      <p className="mt-3 font-body text-sm leading-relaxed text-mist">{c.description}</p>
+                      {c.quote && (
+                        <p className="mt-4 font-body text-sm italic text-ember/60 opacity-0 transition-opacity group-hover:opacity-100">
+                          {c.quote}
+                        </p>
+                      )}
+                    </motion.article>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-16 flex flex-wrap justify-center gap-3">
+                {sagaThemes.map((theme) => (
+                  <span
+                    key={theme}
+                    className="rounded-full border border-mist/15 px-4 py-1.5 font-body text-sm italic text-mist/50"
+                  >
+                    {theme}
+                  </span>
+                ))}
+              </div>
+            </motion.div>
+          )}
+
+          {view === 'toc' && activeBook && (
+            <motion.div
+              key="toc"
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
             >
-              {theme}
-            </span>
-          ))}
-        </div>
+              <button
+                type="button"
+                onClick={backToLibrary}
+                className="mb-8 font-heading text-xs tracking-widest text-mist/50 transition-colors hover:text-ember"
+              >
+                ← БІБЛІОТЕКА
+              </button>
+
+              <div className="saga-leather-cover rounded-xl p-8 md:p-10">
+                <p className="font-heading text-[10px] tracking-[0.4em] text-mist/40">
+                  {activeBook.subtitle.toUpperCase()}
+                </p>
+                <h3 className="mt-2 font-heading text-3xl text-ember md:text-4xl">{activeBook.title}</h3>
+                <p className="mt-4 max-w-2xl font-body text-lg italic text-mist/70">{activeBook.summary}</p>
+
+                <div className="mt-10 border-t border-ember/10 pt-8">
+                  <h4 className="mb-6 font-heading text-xs tracking-[0.3em] text-mist/50">ЗМІСТ</h4>
+                  <ol className="space-y-2">
+                    {getChaptersByBook(activeBook.id).map((ch) => (
+                      <li key={ch.id}>
+                        <button
+                          type="button"
+                          onClick={() => openChapter(ch)}
+                          className="saga-toc-item group w-full text-left"
+                        >
+                          <span className="font-heading text-xs tracking-wider text-ember/70">
+                            {chapterLabel(ch)}
+                          </span>
+                          <span className="mx-3 hidden flex-1 border-b border-dotted border-mist/15 sm:block" />
+                          <span className="font-body text-base text-mist transition-colors group-hover:text-white sm:flex-1">
+                            {ch.title}
+                          </span>
+                          <span className="mt-1 block font-body text-xs text-mist/40 sm:mt-0 sm:text-right">
+                            {ch.pov}
+                            {ch.realmName && ` · ${ch.realmName}`}
+                          </span>
+                        </button>
+                      </li>
+                    ))}
+                  </ol>
+                </div>
+              </div>
+            </motion.div>
+          )}
+
+          {view === 'read' && activeChapter && activeBook && (
+            <motion.div
+              key={activeChapter.id}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <div className="mb-6 flex flex-wrap items-center justify-between gap-4">
+                <button
+                  type="button"
+                  onClick={backToToc}
+                  className="font-heading text-xs tracking-widest text-mist/50 transition-colors hover:text-ember"
+                >
+                  ← {activeBook.title.toUpperCase()}
+                </button>
+                <span className="font-heading text-[10px] tracking-widest text-mist/40">
+                  {chapterLabel(activeChapter)}
+                </span>
+              </div>
+
+              <article className="saga-page mx-auto max-w-2xl">
+                <header className="saga-page-header text-center">
+                  <p className="font-heading text-[10px] tracking-[0.35em] text-mist/45">
+                    {activeBook.subtitle.toUpperCase()} · {chapterLabel(activeChapter).toUpperCase()}
+                  </p>
+                  <h3 className="mt-4 font-heading text-2xl text-ember md:text-3xl">
+                    {activeChapter.title}
+                  </h3>
+                  <p className="mt-3 font-body text-sm italic text-mist/60">
+                    {activeChapter.pov}
+                    {activeChapter.realmName && ` — ${activeChapter.realmName}`}
+                  </p>
+                </header>
+
+                <div className="saga-page-body mt-10 space-y-6">
+                  {activeChapter.paragraphs.map((para, i) => (
+                    <p key={i} className="saga-book-text text-lg leading-[1.85] md:text-xl md:leading-[1.9]">
+                      {i === 0 ? (
+                        <>
+                          <span className="saga-drop-cap">{para[0]}</span>
+                          {para.slice(1)}
+                        </>
+                      ) : (
+                        para
+                      )}
+                    </p>
+                  ))}
+                </div>
+
+                {activeChapter.marginalia && (
+                  <aside className="saga-marginalia mt-10">
+                    <p className="font-heading text-[9px] tracking-[0.25em] text-mist/35">ПРИМІТКА АРХІВУ</p>
+                    <p className="mt-2 font-body text-sm italic leading-relaxed text-mist/55">
+                      {activeChapter.marginalia}
+                    </p>
+                  </aside>
+                )}
+
+                <footer className="saga-page-footer mt-12 flex items-center justify-between border-t border-ember/10 pt-6">
+                  <button
+                    type="button"
+                    disabled={!adjacent.prev}
+                    onClick={() => adjacent.prev && openChapter(adjacent.prev)}
+                    className="font-heading text-xs tracking-widest text-mist/50 transition-colors hover:text-ember disabled:invisible"
+                  >
+                    ← ПОПЕРЕДНЯ
+                  </button>
+                  <span className="font-heading text-[10px] tracking-widest text-mist/30">
+                    {activeChapter.realmName ?? 'АРХІВ'}
+                  </span>
+                  <button
+                    type="button"
+                    disabled={!adjacent.next}
+                    onClick={() => adjacent.next && openChapter(adjacent.next)}
+                    className="font-heading text-xs tracking-widest text-mist/50 transition-colors hover:text-ember disabled:invisible"
+                  >
+                    НАСТУПНА →
+                  </button>
+                </footer>
+              </article>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </section>
   )
