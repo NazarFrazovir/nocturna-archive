@@ -224,6 +224,10 @@ h4 {
   filter: sepia(0.18) saturate(0.85) contrast(1.04) brightness(0.95);
 }
 
+.map-interactive {
+  pointer-events: all;
+}
+
 .map-fog-overlay {
   background:
     radial-gradient(ellipse at 30% 20%, rgba(80, 60, 40, 0.08) 0%, transparent 50%),

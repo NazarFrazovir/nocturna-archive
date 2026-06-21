@@ -209,7 +209,7 @@ export function WorldMap({ selected, onSelect }: Props) {
           <div className="map-fog-overlay pointer-events-none absolute inset-0 z-10" />
           <div className="map-vignette pointer-events-none absolute inset-0 z-10" />
 
-          <svg viewBox="0 0 1000 600" className="map-parchment-svg relative z-[2] w-full" aria-label="Карта Етельморну">
+          <svg viewBox="0 0 1000 600" className="map-parchment-svg relative z-[2] w-full" style={{ pointerEvents: 'auto' }} aria-label="Карта Етельморну">
             <defs>
               <filter id="paperNoise" x="0%" y="0%" width="100%" height="100%">
                 <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" seed="8" result="noise" />
@@ -266,123 +266,130 @@ export function WorldMap({ selected, onSelect }: Props) {
               </filter>
             </defs>
 
-            {/* Parchment undertone */}
-            <rect width="1000" height="600" fill="#2a2218" />
-            <rect width="1000" height="600" fill="url(#fiberPattern)" />
-
-            {/* Ocean — ink wash on parchment */}
-            <rect width="1000" height="600" fill="url(#seaGrad)" />
-            <rect width="1000" height="600" fill="url(#waves)" />
-            <rect width="1000" height="600" fill="url(#mapGrid)" />
-
-            {/* Sea labels */}
-            <text x="60" y="560" fill="rgba(80,100,140,0.25)" fontSize="13" fontFamily="Cormorant Garamond, serif" fontStyle="italic">
-              Західні Води
-            </text>
-            <text x="820" y="575" fill="rgba(80,100,140,0.25)" fontSize="13" fontFamily="Cormorant Garamond, serif" fontStyle="italic">
-              Море Завіси
-            </text>
-
-            {/* Continent shadow */}
-            <path
-              d={continentCoast}
-              fill="rgba(0,0,0,0.5)"
-              transform="translate(6, 8)"
-            />
-
-            {/* Continent land base */}
-            <path
-              d={continentCoast}
-              fill="#1a1610"
-              stroke="rgba(120,90,50,0.35)"
-              strokeWidth="1.5"
-              filter="url(#coastGlow)"
-            />
-
-            {/* Mountain ranges — decorative */}
-            <path d="M 350,200 L 370,175 L 390,195 L 410,170 L 430,190" fill="none" stroke="rgba(60,50,70,0.4)" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M 600,350 L 620,325 L 640,345 L 660,320" fill="none" stroke="rgba(60,50,70,0.35)" strokeWidth="1.5" strokeLinecap="round" />
-            <path d="M 480,280 L 495,260 L 510,275 L 525,255 L 540,270" fill="none" stroke="rgba(201,162,39,0.15)" strokeWidth="1" strokeLinecap="round" />
-
-            {/* Trade routes */}
-            {tradeRoutes.map((d, i) => (
+            {/* ── Background (no pointer events) ── */}
+            <g pointerEvents="none">
+              <rect width="1000" height="600" fill="#2a2218" />
+              <rect width="1000" height="600" fill="url(#fiberPattern)" />
+              <rect width="1000" height="600" fill="url(#seaGrad)" />
+              <rect width="1000" height="600" fill="url(#waves)" />
+              <rect width="1000" height="600" fill="url(#mapGrid)" />
+              <text x="60" y="560" fill="rgba(80,100,140,0.25)" fontSize="13" fontFamily="Cormorant Garamond, serif" fontStyle="italic">
+                Західні Води
+              </text>
+              <text x="820" y="575" fill="rgba(80,100,140,0.25)" fontSize="13" fontFamily="Cormorant Garamond, serif" fontStyle="italic">
+                Море Завіси
+              </text>
+              <path d={continentCoast} fill="rgba(0,0,0,0.5)" transform="translate(6, 8)" />
               <path
-                key={i}
-                d={d}
-                fill="none"
-                stroke="rgba(201,162,39,0.08)"
-                strokeWidth="1"
-                strokeDasharray="4 6"
+                d={continentCoast}
+                fill="#1a1610"
+                stroke="rgba(120,90,50,0.35)"
+                strokeWidth="1.5"
+                filter="url(#coastGlow)"
               />
-            ))}
-
-            {/* Regions */}
-            {realms.map((realm) => {
-              const lit = isLit(realm.id)
-              return (
-                <g
-                  key={realm.id}
-                  onMouseEnter={() => setHovered(realm.id)}
-                  onMouseLeave={() => setHovered(null)}
-                  className="cursor-pointer"
-                  onClick={() => handleClick(realm.id)}
-                >
-                  <motion.path
-                    d={realm.mapPath}
-                    fill={`url(#grad-${realm.id})`}
-                    stroke={lit ? '#e8d48b' : 'rgba(201,162,39,0.12)'}
-                    strokeWidth={lit ? 2 : 0.8}
-                    animate={{ opacity: lit ? 1 : 0.88 }}
-                    transition={{ duration: 0.25 }}
-                    filter={lit ? 'url(#regionGlow)' : undefined}
-                  />
-                  {lit && (
-                    <path
-                      d={realm.mapPath}
-                      fill="none"
-                      stroke={realm.glow.replace(/[\d.]+\)$/, '0.4)')}
-                      strokeWidth="4"
-                      opacity="0.6"
-                    />
-                  )}
-                </g>
-              )
-            })}
-
-            {/* Empire center */}
-            <g
-              onMouseEnter={() => setHovered(empireCenter.id)}
-              onMouseLeave={() => setHovered(null)}
-              className="cursor-pointer"
-              onClick={() => handleClick(empireCenter.id)}
-            >
-              <motion.path
-                d={empireCenter.mapPath}
-                fill="url(#grad-empire)"
-                stroke={isLit(empireCenter.id) ? '#c9a227' : 'rgba(201,162,39,0.25)'}
-                strokeWidth={isLit(empireCenter.id) ? 2 : 1}
-                strokeDasharray="5 4"
-                animate={{ opacity: isLit(empireCenter.id) ? 1 : 0.7 }}
-              />
-              {isLit(empireCenter.id) && (
-                <path
-                  d={empireCenter.mapPath}
-                  fill="none"
-                  stroke="rgba(201,162,39,0.3)"
-                  strokeWidth="6"
-                />
-              )}
+              <path d="M 350,200 L 370,175 L 390,195 L 410,170 L 430,190" fill="none" stroke="rgba(60,50,70,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M 600,350 L 620,325 L 640,345 L 660,320" fill="none" stroke="rgba(60,50,70,0.35)" strokeWidth="1.5" strokeLinecap="round" />
+              <path d="M 480,280 L 495,260 L 510,275 L 525,255 L 540,270" fill="none" stroke="rgba(201,162,39,0.15)" strokeWidth="1" strokeLinecap="round" />
+              {tradeRoutes.map((d, i) => (
+                <path key={i} d={d} fill="none" stroke="rgba(201,162,39,0.08)" strokeWidth="1" strokeDasharray="4 6" />
+              ))}
             </g>
 
-            {/* Coast line highlight */}
-            <path
-              d={continentCoast}
-              fill="none"
-              stroke="rgba(201,162,39,0.2)"
-              strokeWidth="1"
-            />
+            {/* ── Parchment stains (below interactive) ── */}
+            <g pointerEvents="none">
+              <ellipse cx="130" cy="470" rx="95" ry="70" fill="url(#stain1)" opacity="0.7" />
+              <ellipse cx="870" cy="130" rx="65" ry="50" fill="url(#stain2)" opacity="0.6" />
+              <ellipse cx="750" cy="520" rx="55" ry="40" fill="url(#stain1)" opacity="0.5" />
+              <ellipse cx="200" cy="100" rx="40" ry="30" fill="rgba(60,35,15,0.12)" />
+              <ellipse cx="500" cy="550" rx="120" ry="35" fill="rgba(40,25,10,0.1)" />
+              <path d="M 60,300 C 75,285 90,295 85,310 C 80,325 65,320 55,308 C 50,298 55,292 60,300 Z" fill="rgba(30,20,10,0.15)" />
+              <path d="M 920,380 C 935,365 948,378 940,395 C 930,410 915,402 908,388 C 905,375 912,368 920,380 Z" fill="rgba(25,15,8,0.18)" />
+            </g>
 
-            {/* Labels & pins */}
+            {/* ── Interactive regions (topmost clickable layer) ── */}
+            <g className="map-interactive">
+              {realms.map((realm) => {
+                const lit = isLit(realm.id)
+                return (
+                  <g
+                    key={realm.id}
+                    onMouseEnter={() => setHovered(realm.id)}
+                    onMouseLeave={() => setHovered(null)}
+                    className="cursor-pointer"
+                    onClick={() => handleClick(realm.id)}
+                    role="button"
+                    tabIndex={0}
+                    aria-label={`${realm.name}, ${realm.stateType}`}
+                    onKeyDown={(e) => e.key === 'Enter' && handleClick(realm.id)}
+                  >
+                    <motion.path
+                      d={realm.mapPath}
+                      fill={`url(#grad-${realm.id})`}
+                      stroke={lit ? '#e8d48b' : 'rgba(201,162,39,0.12)'}
+                      strokeWidth={lit ? 2 : 0.8}
+                      animate={{ opacity: lit ? 1 : 0.88 }}
+                      transition={{ duration: 0.25 }}
+                      filter={lit ? 'url(#regionGlow)' : undefined}
+                    />
+                    {lit && (
+                      <path
+                        d={realm.mapPath}
+                        fill="none"
+                        stroke={realm.glow.replace(/[\d.]+\)$/, '0.4)')}
+                        strokeWidth="4"
+                        opacity="0.6"
+                        pointerEvents="none"
+                      />
+                    )}
+                  </g>
+                )
+              })}
+              <g
+                onMouseEnter={() => setHovered(empireCenter.id)}
+                onMouseLeave={() => setHovered(null)}
+                className="cursor-pointer"
+                onClick={() => handleClick(empireCenter.id)}
+                role="button"
+                tabIndex={0}
+                aria-label={empireCenter.name}
+                onKeyDown={(e) => e.key === 'Enter' && handleClick(empireCenter.id)}
+              >
+                <motion.path
+                  d={empireCenter.mapPath}
+                  fill="url(#grad-empire)"
+                  stroke={isLit(empireCenter.id) ? '#c9a227' : 'rgba(201,162,39,0.25)'}
+                  strokeWidth={isLit(empireCenter.id) ? 2 : 1}
+                  strokeDasharray="5 4"
+                  animate={{ opacity: isLit(empireCenter.id) ? 1 : 0.7 }}
+                />
+                {isLit(empireCenter.id) && (
+                  <path
+                    d={empireCenter.mapPath}
+                    fill="none"
+                    stroke="rgba(201,162,39,0.3)"
+                    strokeWidth="6"
+                    pointerEvents="none"
+                  />
+                )}
+              </g>
+            </g>
+
+            {/* ── Frame & parchment wash (no pointer events) ── */}
+            <g pointerEvents="none">
+              <path d={continentCoast} fill="none" stroke="rgba(201,162,39,0.2)" strokeWidth="1" />
+              <rect width="1000" height="600" fill="rgba(180,150,90,0.04)" filter="url(#paperNoise)" opacity="0.6" style={{ mixBlendMode: 'multiply' }} />
+              <rect width="1000" height="600" fill="rgba(160,120,60,0.06)" />
+              <rect x="20" y="20" width="960" height="560" fill="none" stroke="rgba(120,90,50,0.2)" strokeWidth="1" rx="2" />
+              <rect x="26" y="26" width="948" height="548" fill="none" stroke="rgba(120,90,50,0.08)" strokeWidth="0.5" rx="1" />
+              <CompassRose />
+              <OrnateCorner x={30} y={30} rotate={0} />
+              <OrnateCorner x={970} y={30} rotate={90} />
+              <OrnateCorner x={30} y={570} rotate={-90} />
+              <OrnateCorner x={970} y={570} rotate={180} />
+            </g>
+
+            {/* Labels & pins (no pointer events) */}
+            <g pointerEvents="none">
             {realms.map((realm) => (
               <g key={`label-${realm.id}`}>
                 <CapitalPin
@@ -413,46 +420,8 @@ export function WorldMap({ selected, onSelect }: Props) {
               sub="Мертве Серце"
               active={isLit(empireCenter.id)}
             />
+            </g>
 
-            <CompassRose />
-            <OrnateCorner x={30} y={30} rotate={0} />
-            <OrnateCorner x={970} y={30} rotate={90} />
-            <OrnateCorner x={30} y={570} rotate={-90} />
-            <OrnateCorner x={970} y={570} rotate={180} />
-
-            {/* Ink stains on parchment */}
-            <ellipse cx="130" cy="470" rx="95" ry="70" fill="url(#stain1)" opacity="0.7" />
-            <ellipse cx="870" cy="130" rx="65" ry="50" fill="url(#stain2)" opacity="0.6" />
-            <ellipse cx="750" cy="520" rx="55" ry="40" fill="url(#stain1)" opacity="0.5" />
-            <ellipse cx="200" cy="100" rx="40" ry="30" fill="rgba(60,35,15,0.12)" />
-            <ellipse cx="500" cy="550" rx="120" ry="35" fill="rgba(40,25,10,0.1)" />
-
-            {/* Ink blot */}
-            <path
-              d="M 60,300 C 75,285 90,295 85,310 C 80,325 65,320 55,308 C 50,298 55,292 60,300 Z"
-              fill="rgba(30,20,10,0.15)"
-            />
-            <path
-              d="M 920,380 C 935,365 948,378 940,395 C 930,410 915,402 908,388 C 905,375 912,368 920,380 Z"
-              fill="rgba(25,15,8,0.18)"
-            />
-
-            {/* Paper grain overlay */}
-            <rect
-              width="1000"
-              height="600"
-              fill="rgba(180,150,90,0.04)"
-              filter="url(#paperNoise)"
-              opacity="0.6"
-              style={{ mixBlendMode: 'multiply' }}
-            />
-
-            {/* Sepia wash */}
-            <rect width="1000" height="600" fill="rgba(160,120,60,0.06)" />
-
-            {/* Inner map border */}
-            <rect x="20" y="20" width="960" height="560" fill="none" stroke="rgba(120,90,50,0.2)" strokeWidth="1" rx="2" />
-            <rect x="26" y="26" width="948" height="548" fill="none" stroke="rgba(120,90,50,0.08)" strokeWidth="0.5" rx="1" />
           </svg>
         </div>
 

@@ -70,7 +70,7 @@ export function HeroPortal() {
           className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center"
         >
           <a
-            href="#realms"
+            href="#saga"
             className="shimmer-border group rounded border border-ember/40 bg-ember/5 px-8 py-3 font-heading text-sm tracking-[0.2em] text-ember transition-all hover:bg-ember/15 hover:shadow-[0_0_30px_rgba(201,162,39,0.2)]"
           >
             Увійти до Архіву

@@ -13,6 +13,7 @@ import { InkkeepersSection } from './components/inkkeepers/InkkeepersSection'
 import { CodexSection } from './components/codex/CodexSection'
 import { ChroniclesSection } from './components/chronicles/ChroniclesSection'
 import { OracleSection } from './components/oracle/OracleSection'
+import { SagaSection } from './components/saga/SagaSection'
 
 function App() {
   useLenis()
@@ -28,6 +29,8 @@ function App() {
       <Header />
       <main className={loaded ? '' : 'invisible'}>
         <HeroPortal />
+        <SectionDivider />
+        <SagaSection />
         <SectionDivider />
         <RealmsSection />
         <SectionDivider />
