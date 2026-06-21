@@ -14,6 +14,7 @@ import { CodexSection } from './components/codex/CodexSection'
 import { ChroniclesSection } from './components/chronicles/ChroniclesSection'
 import { OracleSection } from './components/oracle/OracleSection'
 import { SagaSection } from './components/saga/SagaSection'
+import { EclipseOverlay } from './components/layout/EclipseOverlay'
 
 function App() {
   useLenis()
@@ -23,6 +24,7 @@ function App() {
   return (
     <>
       {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
+      <EclipseOverlay />
       <FilmGrain />
       <ScrollProgress />
       <CursorGlow />

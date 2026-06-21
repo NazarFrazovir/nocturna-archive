@@ -1,17 +1,34 @@
 import { motion } from 'framer-motion'
 import { RuneField } from './RuneField'
 import { useMouseParallax } from '../../hooks/useMouseParallax'
+import { useArchiveProgress } from '../../hooks/useArchiveProgress'
+
+function useNightMode() {
+  const hour = new Date().getHours()
+  return hour >= 22 || hour < 6
+}
 
 export function HeroPortal() {
   const parallax = useMouseParallax(24)
+  const { hasProgress, progress, eclipseActive } = useArchiveProgress()
+  const isNight = useNightMode()
+  const readPrologue = progress.readChapters.includes('b1-prologue')
 
   return (
     <section
       id="hero"
-      className="relative flex min-h-svh items-center justify-center overflow-hidden px-6"
+      className={`hero-portal relative flex min-h-svh items-center justify-center overflow-hidden px-6 ${
+        isNight ? 'hero-portal--night' : ''
+      } ${eclipseActive ? 'hero-portal--eclipse' : ''}`}
     >
       <div className="absolute inset-0 bg-gradient-to-b from-veil/40 via-void to-void" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(201,162,39,0.08)_0%,transparent_70%)]" />
+      {isNight && (
+        <div
+          className="hero-stars pointer-events-none absolute inset-0 opacity-40"
+          aria-hidden="true"
+        />
+      )}
       <div
         className="absolute inset-0 opacity-30"
         style={{
@@ -60,7 +77,11 @@ export function HeroPortal() {
           transition={{ duration: 0.8, delay: 1 }}
           className="mx-auto mt-6 max-w-xl font-body text-xl italic text-mist md:text-2xl"
         >
-          Сім держав за завісою. Забуті істини. Один крок — і ти вже в хроніці.
+          {readPrologue
+            ? 'Ти вже відкрив сторінку, якої не мало б існувати.'
+            : hasProgress
+              ? 'Архів пам’ятає. Сага чекає наступної глави.'
+              : 'Сім держав за завісою. Забуті істини. Один крок — і ти вже в хроніці.'}
         </motion.p>
 
         <motion.div

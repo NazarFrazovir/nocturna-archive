@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import {
   sagaPremise,
@@ -10,10 +10,16 @@ import {
 import type { SagaBook, SagaChapter } from '../../data/saga'
 import { characters } from '../../data/characters'
 import { factions } from '../../data/factions'
+import { useArchiveProgress } from '../../hooks/useArchiveProgress'
 
 type SagaView = 'library' | 'toc' | 'read'
 
 const ROMAN = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII']
+
+const HIDDEN_MARGINALIA: Record<string, string> = {
+  'b3-epilogue':
+    'Торен не договорив. Останнє слово ще не висохло — воно чекає на тебе, не на сторінку.',
+}
 
 function chapterLabel(ch: SagaChapter): string {
   if (ch.type === 'prologue') return 'Пролог'
@@ -21,10 +27,18 @@ function chapterLabel(ch: SagaChapter): string {
   return `Глава ${ROMAN[(ch.number ?? 1) - 1]}`
 }
 
+function povArticleClass(povCharacterId: string): string {
+  if (povCharacterId === 'mirren-thorn') return 'saga-pov-unreliable'
+  if (povCharacterId === 'nameless-king') return 'saga-pov-wall'
+  return ''
+}
+
 export function SagaSection() {
   const [view, setView] = useState<SagaView>('library')
   const [activeBook, setActiveBook] = useState<SagaBook | null>(null)
   const [activeChapter, setActiveChapter] = useState<SagaChapter | null>(null)
+  const [isRevisit, setIsRevisit] = useState(false)
+  const { markChapterRead, isChapterRead } = useArchiveProgress()
 
   const openBook = useCallback((book: SagaBook) => {
     setActiveBook(book)
@@ -32,9 +46,16 @@ export function SagaSection() {
   }, [])
 
   const openChapter = useCallback((chapter: SagaChapter) => {
+    setIsRevisit(isChapterRead(chapter.id))
     setActiveChapter(chapter)
     setView('read')
-  }, [])
+  }, [isChapterRead])
+
+  useEffect(() => {
+    if (view === 'read' && activeChapter) {
+      markChapterRead(activeChapter.id)
+    }
+  }, [view, activeChapter, markChapterRead])
 
   const backToLibrary = useCallback(() => {
     setView('library')
@@ -229,9 +250,14 @@ export function SagaSection() {
                         <button
                           type="button"
                           onClick={() => openChapter(ch)}
-                          className="saga-toc-item group w-full text-left"
+                          className={`saga-toc-item group w-full text-left ${
+                            isChapterRead(ch.id) ? 'saga-toc-item--read' : ''
+                          }`}
                         >
                           <span className="font-heading text-xs tracking-wider text-ember/70">
+                            {isChapterRead(ch.id) && (
+                              <span className="mr-1.5 text-ember/40">✓</span>
+                            )}
                             {chapterLabel(ch)}
                           </span>
                           <span className="mx-3 hidden flex-1 border-b border-dotted border-mist/15 sm:block" />
@@ -271,7 +297,23 @@ export function SagaSection() {
                 </span>
               </div>
 
-              <article className="saga-page mx-auto max-w-2xl">
+              <article
+                className={`saga-page mx-auto max-w-2xl ${povArticleClass(activeChapter.povCharacterId)}`}
+              >
+                {(() => {
+                  const povChar = characters.find((c) => c.id === activeChapter.povCharacterId)
+                  if (!povChar) return null
+                  return (
+                    <div className="saga-chapter-portrait mx-auto mb-8 h-20 w-20 overflow-hidden rounded-full border border-ember/20">
+                      <img
+                        src={povChar.portrait}
+                        alt={povChar.name}
+                        className="h-full w-full object-cover object-top"
+                      />
+                    </div>
+                  )
+                })()}
+
                 <header className="saga-page-header text-center">
                   <p className="font-heading text-[10px] tracking-[0.35em] text-mist/45">
                     {activeBook.subtitle.toUpperCase()} · {chapterLabel(activeChapter).toUpperCase()}
@@ -283,6 +325,14 @@ export function SagaSection() {
                     {activeChapter.pov}
                     {activeChapter.realmName && ` — ${activeChapter.realmName}`}
                   </p>
+                  {activeChapter.realmId && (
+                    <a
+                      href="#realms"
+                      className="mt-2 inline-block font-heading text-[9px] tracking-widest text-ember/40 transition-colors hover:text-ember/70"
+                    >
+                      ДЕРЖАВА НА КАРТІ →
+                    </a>
+                  )}
                 </header>
 
                 <div className="saga-page-body mt-10 space-y-6">
@@ -306,6 +356,11 @@ export function SagaSection() {
                     <p className="mt-2 font-body text-sm italic leading-relaxed text-mist/55">
                       {activeChapter.marginalia}
                     </p>
+                    {isRevisit && HIDDEN_MARGINALIA[activeChapter.id] && (
+                      <p className="saga-marginalia-hidden mt-4 font-body text-sm italic leading-relaxed text-ember/50">
+                        {HIDDEN_MARGINALIA[activeChapter.id]}
+                      </p>
+                    )}
                   </aside>
                 )}
 

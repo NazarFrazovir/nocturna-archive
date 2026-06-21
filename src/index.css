@@ -30,6 +30,15 @@ html.lenis body {
   scroll-behavior: auto !important;
 }
 
+body.eclipse-active {
+  background: #050508;
+}
+
+body.eclipse-active .fixed.top-0.z-\[60\] {
+  opacity: 0.35;
+  filter: grayscale(0.5);
+}
+
 body {
   margin: 0;
   background: var(--color-void);
@@ -408,4 +417,89 @@ h4 {
     linear-gradient(to top, rgba(14, 12, 18, 0.85) 0%, transparent 45%),
     linear-gradient(to bottom, rgba(14, 12, 18, 0.25) 0%, transparent 20%);
   pointer-events: none;
+}
+
+.archive-seal-button {
+  touch-action: none;
+  user-select: none;
+}
+
+.archive-entry-ritual {
+  background:
+    radial-gradient(ellipse at center, rgba(42, 31, 61, 0.2) 0%, transparent 60%),
+    var(--color-void);
+}
+
+.hero-portal--night {
+  background-color: #06060a;
+}
+
+.hero-portal--eclipse .bg-gradient-to-b {
+  opacity: 0.6;
+}
+
+.hero-stars {
+  background-image:
+    radial-gradient(1px 1px at 10% 20%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 30% 65%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 55% 15%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 70% 45%, rgba(255, 255, 255, 0.25), transparent),
+    radial-gradient(1px 1px at 85% 75%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 45% 85%, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 100% 100%;
+}
+
+.saga-toc-item--read .font-body {
+  color: rgba(200, 192, 204, 0.55);
+}
+
+.saga-pov-unreliable .saga-page-body {
+  animation: povPulse 8s ease-in-out infinite;
+}
+
+.saga-pov-unreliable .saga-book-text:nth-child(even) {
+  opacity: 0.82;
+}
+
+.saga-pov-wall .saga-page-body {
+  position: relative;
+  mask-image: linear-gradient(
+    180deg,
+    transparent 0%,
+    black 8%,
+    black 92%,
+    transparent 100%
+  );
+}
+
+.saga-pov-wall .saga-book-text {
+  text-shadow: 0 0 20px rgba(201, 162, 39, 0.08);
+}
+
+.saga-marginalia-hidden {
+  border-top: 1px solid rgba(201, 162, 39, 0.15);
+  padding-top: 1rem;
+}
+
+.saga-chapter-portrait {
+  box-shadow: 0 0 24px rgba(201, 162, 39, 0.1);
+}
+
+.oracle-wheel--cracked {
+  filter: drop-shadow(0 0 8px rgba(139, 38, 53, 0.2));
+}
+
+.eclipse-overlay {
+  backdrop-filter: blur(4px);
+}
+
+@keyframes povPulse {
+  0%, 100% { filter: blur(0); opacity: 1; }
+  50% { filter: blur(0.3px); opacity: 0.92; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .saga-pov-unreliable .saga-page-body {
+    animation: none;
+  }
 }

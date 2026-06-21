@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { realms, empireCenter, continentCoast, tradeRoutes } from '../../data/realms'
 import type { Realm } from '../../data/realms'
+import { useArchiveProgress } from '../../hooks/useArchiveProgress'
 
 interface Props {
   selected: string | null
@@ -173,8 +174,49 @@ function MapLabel({
   )
 }
 
+function SealCrack({ realm, level }: { realm: Realm; level: number }) {
+  if (level <= 0) return null
+  const cx = realm.pinX
+  const cy = realm.pinY
+  const opacity = 0.25 + level * 0.2
+
+  return (
+    <g pointerEvents="none" opacity={opacity}>
+      <line
+        x1={cx - 18}
+        y1={cy - 12}
+        x2={cx + 14}
+        y2={cy + 16}
+        stroke="#8b2635"
+        strokeWidth={level >= 2 ? 1.5 : 1}
+      />
+      <line
+        x1={cx + 8}
+        y1={cy - 18}
+        x2={cx - 10}
+        y2={cy + 10}
+        stroke="#c9a227"
+        strokeWidth={1}
+        opacity={0.7}
+      />
+      {level >= 3 && (
+        <line
+          x1={cx - 6}
+          y1={cy + 20}
+          x2={cx + 20}
+          y2={cy - 8}
+          stroke="#8b2635"
+          strokeWidth={1.2}
+        />
+      )}
+    </g>
+  )
+}
+
 export function WorldMap({ selected, onSelect }: Props) {
   const [hovered, setHovered] = useState<string | null>(null)
+  const { getRealmCrackLevel, progress } = useArchiveProgress()
+  const hasCracks = progress.readChapters.some((id) => id.includes('-ch'))
 
   const activeRealm =
     selected === empireCenter.id
@@ -387,6 +429,15 @@ export function WorldMap({ selected, onSelect }: Props) {
               <OrnateCorner x={30} y={570} rotate={-90} />
               <OrnateCorner x={970} y={570} rotate={180} />
             </g>
+
+            {/* Seal cracks from saga progress */}
+            {hasCracks && (
+              <g pointerEvents="none">
+                {realms.map((realm) => (
+                  <SealCrack key={`crack-${realm.id}`} realm={realm} level={getRealmCrackLevel(realm.id)} />
+                ))}
+              </g>
+            )}
 
             {/* Labels & pins (no pointer events) */}
             <g pointerEvents="none">
