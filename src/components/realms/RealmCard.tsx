@@ -4,18 +4,32 @@ import type { Realm } from '../../data/realms'
 interface Props {
   realm: Realm
   index: number
+  isSelected: boolean
+  onSelect: (id: string) => void
 }
 
-export function RealmCard({ realm, index }: Props) {
+export function RealmCard({ realm, index, isSelected, onSelect }: Props) {
   return (
     <motion.article
+      id={`realm-${realm.id}`}
       initial={{ opacity: 0, y: 40 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-50px' }}
-      transition={{ duration: 0.6, delay: index * 0.1 }}
-      className="shimmer-border group relative overflow-hidden rounded-lg border border-ember/10 bg-obsidian/80 p-6 transition-all duration-500 hover:border-ember/30 hover:shadow-[0_0_40px_rgba(201,162,39,0.08)]"
+      transition={{ duration: 0.6, delay: index * 0.08 }}
+      onClick={() => onSelect(realm.id)}
+      className={`shimmer-border group relative cursor-pointer overflow-hidden rounded-lg border p-6 transition-all duration-500 ${
+        isSelected
+          ? 'border-ember/50 shadow-[0_0_50px_rgba(201,162,39,0.12)]'
+          : 'border-ember/10 hover:border-ember/30 hover:shadow-[0_0_40px_rgba(201,162,39,0.08)]'
+      }`}
+      style={{
+        background: `linear-gradient(135deg, ${realm.color}22 0%, var(--color-obsidian) 60%)`,
+      }}
     >
-      <div className="absolute -right-4 -top-4 font-heading text-6xl text-ember/5 transition-colors group-hover:text-ember/10">
+      <div
+        className="absolute -right-4 -top-4 font-heading text-6xl transition-colors"
+        style={{ color: `${realm.color}33` }}
+      >
         {realm.symbol}
       </div>
 
@@ -29,6 +43,16 @@ export function RealmCard({ realm, index }: Props) {
 
         <h3 className="font-heading text-xl tracking-wide">{realm.name}</h3>
         <p className="mt-3 font-body text-base leading-relaxed text-mist">{realm.description}</p>
+
+        <motion.div
+          initial={false}
+          animate={{ height: isSelected ? 'auto' : 0, opacity: isSelected ? 1 : 0 }}
+          className="overflow-hidden"
+        >
+          <p className="mt-3 border-t border-ember/10 pt-3 font-body text-sm italic leading-relaxed text-mist/80">
+            {realm.extendedLore}
+          </p>
+        </motion.div>
 
         <div className="mt-4 flex items-center gap-1">
           {Array.from({ length: 5 }, (_, i) => (

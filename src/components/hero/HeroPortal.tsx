@@ -1,7 +1,10 @@
 import { motion } from 'framer-motion'
 import { RuneField } from './RuneField'
+import { useMouseParallax } from '../../hooks/useMouseParallax'
 
 export function HeroPortal() {
+  const parallax = useMouseParallax(24)
+
   return (
     <section
       id="hero"
@@ -16,9 +19,19 @@ export function HeroPortal() {
             'radial-gradient(circle at 20% 50%, rgba(139,38,53,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 30%, rgba(42,31,61,0.3) 0%, transparent 50%)',
         }}
       />
+      <div
+        className="pointer-events-none absolute inset-0"
+        style={{
+          background: 'radial-gradient(ellipse at center, transparent 40%, rgba(10,10,15,0.8) 100%)',
+        }}
+      />
       <RuneField />
 
-      <div className="relative z-10 max-w-4xl text-center">
+      <motion.div
+        className="relative z-10 max-w-4xl text-center"
+        style={{ x: parallax.x, y: parallax.y }}
+        transition={{ type: 'spring', stiffness: 50, damping: 20 }}
+      >
         <motion.p
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -83,7 +96,7 @@ export function HeroPortal() {
             className="h-8 w-px bg-gradient-to-b from-ember/60 to-transparent"
           />
         </motion.div>
-      </div>
+      </motion.div>
     </section>
   )
 }

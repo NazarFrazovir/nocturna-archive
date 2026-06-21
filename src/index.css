@@ -131,3 +131,12 @@ h4 {
   margin: 0 auto 3rem;
   font-size: 1.25rem;
 }
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 1px;
+  margin: 1rem auto 0;
+  background: linear-gradient(90deg, transparent, var(--color-ember), transparent);
+}
