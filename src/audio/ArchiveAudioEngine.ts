@@ -1,7 +1,9 @@
 import type { RealmAudioProfile } from './realmProfiles'
 import { HERO_PROFILE } from './realmProfiles'
+import { themeMusic } from './ThemeMusicController'
 
 const MASTER_VOLUME = 0.55
+const MASTER_DUCKED = 0.14
 const FADE_MS = 1800
 
 function createNoiseBuffer(ctx: AudioContext, seconds: number): AudioBuffer {
@@ -28,6 +30,7 @@ export class ArchiveAudioEngine {
   private windSource: AudioBufferSourceNode | null = null
   private running = false
   private currentProfile = HERO_PROFILE
+  private themeOnHero = false
 
   async start(): Promise<void> {
     if (this.running) {
@@ -39,6 +42,8 @@ export class ArchiveAudioEngine {
     const master = ctx.createGain()
     master.gain.value = 0
     master.connect(ctx.destination)
+
+    themeMusic.attach(ctx, ctx.destination)
 
     const droneGain = ctx.createGain()
     const windGain = ctx.createGain()
@@ -91,7 +96,7 @@ export class ArchiveAudioEngine {
     this.running = true
 
     await ctx.resume()
-    this.fadeTo(MASTER_VOLUME)
+    this.fadeMasterTo(this.themeOnHero ? MASTER_DUCKED : MASTER_VOLUME)
   }
 
   private applyProfile(
@@ -106,13 +111,15 @@ export class ArchiveAudioEngine {
     lfoGain: GainNode,
   ) {
     const now = ctx.currentTime
+    const duck = this.themeOnHero
+
     oscA.frequency.setTargetAtTime(profile.droneA, now, 0.8)
     oscB.frequency.setTargetAtTime(profile.droneB, now, 0.8)
     oscA.detune.setTargetAtTime(profile.detune, now, 0.8)
     oscB.detune.setTargetAtTime(-profile.detune, now, 0.8)
     windFilter.frequency.setTargetAtTime(profile.windCutoff, now, 0.8)
-    droneGain.gain.setTargetAtTime(profile.droneGain, now, 0.8)
-    windGain.gain.setTargetAtTime(profile.windGain, now, 0.8)
+    droneGain.gain.setTargetAtTime(duck ? profile.droneGain * 0.25 : profile.droneGain, now, 0.8)
+    windGain.gain.setTargetAtTime(duck ? profile.windGain * 0.2 : profile.windGain, now, 0.8)
     lfo.frequency.setTargetAtTime(profile.lfoRate, now, 0.8)
     lfoGain.gain.setTargetAtTime(profile.lfoDepth, now, 0.8)
     this.currentProfile = profile
@@ -120,11 +127,26 @@ export class ArchiveAudioEngine {
 
   crossfadeTo(profile: RealmAudioProfile) {
     if (!this.ctx || !this.oscA || !this.oscB || !this.windFilter || !this.droneGain || !this.windGain || !this.lfo || !this.lfoGain) return
-    if (profile.id === this.currentProfile.id) return
     this.applyProfile(profile, this.ctx, this.oscA, this.oscB, this.windFilter, this.droneGain, this.windGain, this.lfo, this.lfoGain)
   }
 
-  private fadeTo(target: number) {
+  setThemeOnHero(active: boolean) {
+    this.themeOnHero = active
+    if (!this.running) return
+
+    themeMusic.setVisible(active)
+    this.fadeMasterTo(active ? MASTER_DUCKED : MASTER_VOLUME)
+
+    if (this.ctx && this.oscA && this.oscB && this.windFilter && this.droneGain && this.windGain && this.lfo && this.lfoGain) {
+      this.applyProfile(this.currentProfile, this.ctx, this.oscA, this.oscB, this.windFilter, this.droneGain, this.windGain, this.lfo, this.lfoGain)
+    }
+  }
+
+  isThemeOnHero() {
+    return this.themeOnHero
+  }
+
+  private fadeMasterTo(target: number) {
     if (!this.ctx || !this.master) return
     const now = this.ctx.currentTime
     this.master.gain.cancelScheduledValues(now)
@@ -133,11 +155,13 @@ export class ArchiveAudioEngine {
   }
 
   mute() {
-    this.fadeTo(0)
+    themeMusic.setVisible(false)
+    this.fadeMasterTo(0)
   }
 
   unmute() {
-    this.fadeTo(MASTER_VOLUME)
+    this.fadeMasterTo(this.themeOnHero ? MASTER_DUCKED : MASTER_VOLUME)
+    if (this.themeOnHero) themeMusic.setVisible(true)
   }
 
   playRealmStinger(realmId: string) {
@@ -183,15 +207,18 @@ export class ArchiveAudioEngine {
 
   stop() {
     if (!this.running) return
+    themeMusic.pause()
     this.mute()
     setTimeout(() => {
       this.oscA?.stop()
       this.oscB?.stop()
       this.lfo?.stop()
       this.windSource?.stop()
+      themeMusic.destroy()
       this.ctx?.close()
       this.ctx = null
       this.running = false
+      this.themeOnHero = false
     }, FADE_MS + 100)
   }
 

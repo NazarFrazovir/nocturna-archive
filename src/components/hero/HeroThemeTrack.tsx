@@ -1,51 +1,53 @@
-import { useState } from 'react'
-import { motion, AnimatePresence } from 'framer-motion'
-
-const SPOTIFY_TRACK_ID = '2AX5E86cn9n2dgioZEjirI'
+import { motion } from 'framer-motion'
+import { useArchiveAudio } from '../../context/ArchiveAudioContext'
+import { useActiveSection } from '../../hooks/useActiveSection'
 
 export function HeroThemeTrack() {
-  const [open, setOpen] = useState(false)
+  const { enabled, themeOnHero } = useArchiveAudio()
+  const activeSection = useActiveSection()
+  const onHero = activeSection === 'hero'
+
+  if (!onHero) return null
 
   return (
-    <div className="hero-theme-track absolute bottom-8 right-6 z-20 md:bottom-12 md:right-10">
-      <button
-        type="button"
-        onClick={() => setOpen((v) => !v)}
-        className="hero-theme-track-toggle flex items-center gap-2 rounded-full border border-ember/25 bg-obsidian/70 px-4 py-2 font-heading text-[10px] tracking-[0.2em] text-ember/80 backdrop-blur-sm transition-all hover:border-ember/45 hover:text-ember"
-        aria-expanded={open}
-        aria-label={open ? 'Сховати плеєр' : 'Слухати Golden Brown'}
+    <motion.div
+      initial={{ opacity: 0, x: 12 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="hero-theme-track absolute bottom-8 right-6 z-20 md:bottom-12 md:right-10"
+    >
+      <div
+        className={`hero-theme-track-badge flex items-center gap-3 rounded-full border px-4 py-2 backdrop-blur-sm transition-all ${
+          themeOnHero
+            ? 'border-ember/40 bg-obsidian/80'
+            : 'border-ember/15 bg-obsidian/50'
+        }`}
       >
-        <span className="text-sm">{open ? '✕' : '♫'}</span>
-        <span className="hidden sm:inline">GOLDEN BROWN</span>
-      </button>
-
-      <AnimatePresence>
-        {open && (
-          <motion.div
-            initial={{ opacity: 0, y: 12, scale: 0.96 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 8, scale: 0.98 }}
-            transition={{ duration: 0.25 }}
-            className="hero-theme-track-player mt-3 overflow-hidden rounded-xl border border-ember/15 bg-obsidian/90 shadow-2xl shadow-black/50 backdrop-blur-md"
-          >
-            <div className="border-b border-ember/10 px-4 py-3">
-              <p className="font-heading text-[9px] tracking-[0.3em] text-mist/45">ТЕМА АРХІВУ</p>
-              <p className="mt-1 font-heading text-sm text-ember">Golden Brown</p>
-              <p className="font-body text-xs italic text-mist/55">The Stranglers · Spotify</p>
-            </div>
-            <iframe
-              title="Golden Brown — The Stranglers"
-              src={`https://open.spotify.com/embed/track/${SPOTIFY_TRACK_ID}?utm_source=generator&theme=0`}
-              width="100%"
-              height="152"
-              allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-              loading="lazy"
-              className="block border-0"
-              style={{ borderRadius: 0 }}
-            />
-          </motion.div>
+        <span
+          className={`flex h-7 w-7 items-center justify-center rounded-full text-xs ${
+            themeOnHero ? 'bg-ember/15 text-ember' : 'bg-mist/10 text-mist/40'
+          }`}
+        >
+          {themeOnHero ? (
+            <motion.span
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 1.8, repeat: Infinity, ease: 'easeInOut' }}
+            >
+              ♫
+            </motion.span>
+          ) : (
+            '♫'
+          )}
+        </span>
+        <div className="text-left">
+          <p className="font-heading text-[9px] tracking-[0.25em] text-mist/45">ТЕМА АРХІВУ</p>
+          <p className="font-heading text-xs tracking-wider text-ember/90">Golden Brown</p>
+        </div>
+        {!enabled && (
+          <p className="hidden font-body text-[10px] italic text-mist/40 sm:block">
+            Увімкни звук ↑
+          </p>
         )}
-      </AnimatePresence>
-    </div>
+      </div>
+    </motion.div>
   )
 }

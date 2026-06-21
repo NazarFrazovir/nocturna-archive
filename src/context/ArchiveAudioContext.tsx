@@ -20,6 +20,7 @@ const STORAGE_KEY = 'nocturna-audio-enabled'
 
 interface ArchiveAudioContextValue {
   enabled: boolean
+  themeOnHero: boolean
   toggle: () => void
   selectedRealm: string | null
   setSelectedRealm: (id: string | null) => void
@@ -47,10 +48,13 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, 'false')
     } else {
       await audioEngine.start()
+      if (activeSection === 'hero') {
+        audioEngine.setThemeOnHero(true)
+      }
       setEnabled(true)
       localStorage.setItem(STORAGE_KEY, 'true')
     }
-  }, [enabled])
+  }, [enabled, activeSection])
 
   useEffect(() => {
     if (!enabled) return
@@ -67,7 +71,10 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
       profile = { ...DEFAULT_PROFILE, windGain: 0.06, droneGain: 0.04, lfoRate: 0.1 }
     }
 
+    const onHero = activeSection === 'hero'
+
     if (audioEngine.isRunning()) {
+      audioEngine.setThemeOnHero(enabled && onHero)
       audioEngine.crossfadeTo(profile)
     }
   }, [enabled, activeSection, selectedRealm])
@@ -91,9 +98,12 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
     if (enabled) audioEngine.playPageTurn()
   }, [enabled])
 
+  const themeOnHero = enabled && activeSection === 'hero'
+
   const value = useMemo(
     () => ({
       enabled,
+      themeOnHero,
       toggle,
       selectedRealm,
       setSelectedRealm: (id: string | null) => {
@@ -104,7 +114,7 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
       },
       playPageTurn,
     }),
-    [enabled, toggle, selectedRealm, playPageTurn],
+    [enabled, themeOnHero, toggle, selectedRealm, playPageTurn],
   )
 
   return (
