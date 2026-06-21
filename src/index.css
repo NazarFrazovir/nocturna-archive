@@ -518,3 +518,7 @@ h4 {
     animation: none;
   }
 }
+
+.hero-theme-track-player {
+  width: min(100vw - 3rem, 320px);
+}
