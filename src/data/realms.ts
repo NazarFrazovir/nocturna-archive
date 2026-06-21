@@ -10,9 +10,13 @@ export interface Realm {
   danger: number
   color: string
   glow: string
+  gradientFrom: string
+  gradientTo: string
   mapPath: string
   labelX: number
   labelY: number
+  pinX: number
+  pinY: number
 }
 
 export const realms: Realm[] = [
@@ -27,10 +31,14 @@ export const realms: Realm[] = [
     symbol: '☁',
     danger: 4,
     color: '#5a5a5a',
-    glow: 'rgba(120, 120, 120, 0.4)',
-    mapPath: 'M 310,155 C 350,75 430,55 520,85 C 575,110 590,155 555,195 C 490,215 370,205 310,175 Z',
-    labelX: 430,
-    labelY: 130,
+    glow: 'rgba(160, 140, 120, 0.6)',
+    gradientFrom: '#4a4540',
+    gradientTo: '#1e1c1a',
+    mapPath: 'M 340,95 C 400,40 500,35 590,65 C 650,85 680,130 660,175 C 620,200 520,195 440,185 C 370,175 320,140 340,95 Z',
+    labelX: 500,
+    labelY: 115,
+    pinX: 510,
+    pinY: 145,
   },
   {
     id: 'thornmere',
@@ -43,10 +51,14 @@ export const realms: Realm[] = [
     symbol: '☽',
     danger: 3,
     color: '#2d5a3d',
-    glow: 'rgba(45, 90, 61, 0.45)',
-    mapPath: 'M 555,195 C 595,175 655,185 695,225 C 715,265 680,295 625,285 C 570,270 540,230 555,195 Z',
-    labelX: 640,
-    labelY: 240,
+    glow: 'rgba(60, 120, 80, 0.55)',
+    gradientFrom: '#2a4a35',
+    gradientTo: '#142218',
+    mapPath: 'M 660,175 C 700,155 760,165 800,205 C 825,245 800,285 745,295 C 690,285 655,240 660,175 Z',
+    labelX: 735,
+    labelY: 235,
+    pinX: 748,
+    pinY: 255,
   },
   {
     id: 'duskmire',
@@ -59,10 +71,14 @@ export const realms: Realm[] = [
     symbol: '◐',
     danger: 5,
     color: '#2a2045',
-    glow: 'rgba(107, 91, 122, 0.55)',
-    mapPath: 'M 625,285 C 685,295 745,275 770,320 C 785,365 735,390 675,375 C 630,355 610,320 625,285 Z',
-    labelX: 700,
-    labelY: 330,
+    glow: 'rgba(100, 80, 140, 0.6)',
+    gradientFrom: '#352a55',
+    gradientTo: '#151020',
+    mapPath: 'M 745,295 C 800,305 845,290 870,330 C 885,375 850,410 790,400 C 740,385 715,340 745,295 Z',
+    labelX: 810,
+    labelY: 345,
+    pinX: 818,
+    pinY: 365,
   },
   {
     id: 'ironwraith',
@@ -75,10 +91,14 @@ export const realms: Realm[] = [
     symbol: '⚔',
     danger: 4,
     color: '#4a3d4a',
-    glow: 'rgba(139, 38, 53, 0.4)',
-    mapPath: 'M 675,375 C 730,395 755,420 740,465 C 710,495 650,480 620,445 C 605,410 635,385 675,375 Z',
-    labelX: 680,
-    labelY: 435,
+    glow: 'rgba(160, 60, 70, 0.55)',
+    gradientFrom: '#4a3540',
+    gradientTo: '#1a1018',
+    mapPath: 'M 790,400 C 835,420 855,455 835,495 C 800,525 740,510 710,470 C 695,435 730,405 790,400 Z',
+    labelX: 770,
+    labelY: 460,
+    pinX: 778,
+    pinY: 478,
   },
   {
     id: 'hollowspire',
@@ -91,10 +111,14 @@ export const realms: Realm[] = [
     symbol: '▲',
     danger: 5,
     color: '#352a4d',
-    glow: 'rgba(42, 31, 61, 0.65)',
-    mapPath: 'M 470,370 C 515,355 565,365 585,405 C 575,455 505,470 455,445 C 425,415 440,385 470,370 Z',
-    labelX: 515,
-    labelY: 410,
+    glow: 'rgba(120, 90, 180, 0.6)',
+    gradientFrom: '#3d2e58',
+    gradientTo: '#181220',
+    mapPath: 'M 530,380 C 575,365 625,375 650,415 C 640,465 575,485 520,465 C 485,435 495,400 530,380 Z',
+    labelX: 575,
+    labelY: 420,
+    pinX: 580,
+    pinY: 440,
   },
   {
     id: 'nightfen',
@@ -107,10 +131,14 @@ export const realms: Realm[] = [
     symbol: '≋',
     danger: 3,
     color: '#1e3348',
-    glow: 'rgba(30, 51, 72, 0.5)',
-    mapPath: 'M 340,310 C 385,290 425,320 415,375 C 395,415 335,405 305,365 C 290,335 310,315 340,310 Z',
-    labelX: 360,
+    glow: 'rgba(50, 90, 130, 0.55)',
+    gradientFrom: '#243a50',
+    gradientTo: '#0e1820',
+    mapPath: 'M 370,310 C 420,290 470,315 465,370 C 450,415 385,420 345,385 C 325,350 340,325 370,310 Z',
+    labelX: 400,
     labelY: 355,
+    pinX: 408,
+    pinY: 372,
   },
   {
     id: 'grimhold',
@@ -123,10 +151,14 @@ export const realms: Realm[] = [
     symbol: '⬡',
     danger: 5,
     color: '#1a1018',
-    glow: 'rgba(201, 162, 39, 0.3)',
-    mapPath: 'M 270,175 C 310,165 335,215 325,275 C 300,315 245,300 220,255 C 205,210 230,185 270,175 Z',
-    labelX: 275,
-    labelY: 245,
+    glow: 'rgba(201, 162, 39, 0.5)',
+    gradientFrom: '#2a1820',
+    gradientTo: '#0a0608',
+    mapPath: 'M 280,175 C 325,160 355,200 350,260 C 330,310 275,305 245,260 C 225,220 245,190 280,175 Z',
+    labelX: 295,
+    labelY: 235,
+    pinX: 300,
+    pinY: 255,
   },
 ]
 
@@ -135,7 +167,22 @@ export const empireCenter = {
   name: 'Етельморн',
   description: 'Мертве серце імперії. Тут завіса найтонша — і пам\'ять найгучніша.',
   extendedLore: 'Колись — столиця світу. Тепер — порожнеча, з якої ростуть сім держав. Кожна тягне клочок колишньої слави.',
-  labelX: 435,
-  labelY: 285,
-  mapPath: 'M 395,250 C 430,230 475,240 495,280 C 485,320 440,340 400,330 C 365,318 355,280 375,255 Z',
+  labelX: 520,
+  labelY: 300,
+  pinX: 520,
+  pinY: 310,
+  mapPath: 'M 455,255 C 490,230 545,235 575,275 C 585,320 545,355 495,350 C 450,340 430,295 455,255 Z',
 }
+
+export const continentCoast =
+  'M 240,220 C 260,160 340,80 480,55 C 620,40 750,80 820,160 C 870,230 880,320 860,400 C 830,490 740,540 620,530 C 500,520 400,500 320,460 C 250,410 220,340 230,270 C 235,240 240,220 240,220 Z'
+
+export const tradeRoutes = [
+  'M 300,255 L 408,372',
+  'M 510,145 L 520,310',
+  'M 520,310 L 580,440',
+  'M 520,310 L 748,255',
+  'M 748,255 L 818,365',
+  'M 580,440 L 778,478',
+  'M 408,372 L 580,440',
+]

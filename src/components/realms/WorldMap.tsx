@@ -1,5 +1,6 @@
+import { useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
-import { realms, empireCenter } from '../../data/realms'
+import { realms, empireCenter, continentCoast, tradeRoutes } from '../../data/realms'
 import type { Realm } from '../../data/realms'
 
 interface Props {
@@ -20,228 +21,429 @@ function MapInfoPanel({
 
   return (
     <motion.div
-      initial={{ opacity: 0, x: 20 }}
-      animate={{ opacity: 1, x: 0 }}
-      exit={{ opacity: 0, x: 20 }}
-      className="glass-panel w-full rounded-lg border border-ember/20 p-5 md:max-w-xs"
+      initial={{ opacity: 0, y: 16 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 16 }}
+      className="map-info-panel w-full rounded-xl p-6 lg:max-w-sm"
     >
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div>
+          {!isEmpire && (
+            <p className="font-heading text-[10px] tracking-[0.25em] text-ember/50">{r.stateType}</p>
+          )}
+          <h3 className="font-heading text-2xl text-ember">{realm.name}</h3>
+          {!isEmpire && (
+            <p className="mt-1 font-heading text-xs tracking-wider text-mist/50">{r.capital}</p>
+          )}
+        </div>
+        {!isEmpire && (
+          <span className="shrink-0 font-heading text-2xl text-ember/30">{r.symbol}</span>
+        )}
+      </div>
       {!isEmpire && (
-        <p className="font-heading text-[10px] tracking-widest text-mist/50">{r.stateType}</p>
-      )}
-      <h3 className="mt-1 font-heading text-xl text-ember">{realm.name}</h3>
-      {!isEmpire && (
-        <p className="mt-1 font-heading text-xs tracking-wider text-mist/60">
-          Столиця: {r.capital}
-        </p>
-      )}
-      {!isEmpire && (
-        <span className="mt-2 inline-block rounded border border-blood/30 bg-blood/10 px-2 py-0.5 font-heading text-[9px] tracking-wider text-blood">
+        <span className="inline-block rounded border border-blood/40 bg-blood/10 px-3 py-1 font-heading text-[9px] tracking-wider text-blood">
           {r.curse}
         </span>
       )}
       <p className="mt-4 font-body text-base leading-relaxed text-mist">{realm.description}</p>
-      <p className="mt-3 font-body text-sm italic leading-relaxed text-mist/70">
+      <p className="mt-3 font-body text-sm italic leading-relaxed text-mist/65">
         {realm.extendedLore}
       </p>
       {!isEmpire && (
-        <div className="mt-4 flex items-center gap-1">
+        <div className="mt-5 flex items-center gap-1.5">
           {Array.from({ length: 5 }, (_, i) => (
             <div
               key={i}
-              className={`h-1 w-3 rounded-full ${i < r.danger ? 'bg-blood/70' : 'bg-mist/20'}`}
+              className={`h-1.5 w-4 rounded-sm ${i < r.danger ? 'bg-blood/80' : 'bg-mist/15'}`}
             />
           ))}
-          <span className="ml-2 font-heading text-[9px] tracking-wider text-mist/40">НЕБЕЗПЕКА</span>
+          <span className="ml-2 font-heading text-[9px] tracking-wider text-mist/35">НЕБЕЗПЕКА</span>
         </div>
       )}
       <button
         type="button"
         onClick={onClose}
-        className="mt-5 font-heading text-[10px] tracking-widest text-ember/60 transition-colors hover:text-ember"
+        className="mt-6 font-heading text-[10px] tracking-[0.2em] text-ember/50 transition-colors hover:text-ember"
       >
-        ЗАКРИТИ
+        ✕ ЗАКРИТИ
       </button>
     </motion.div>
   )
 }
 
+function CapitalPin({ x, y, active, color }: { x: number; y: number; active: boolean; color?: string }) {
+  const fill = active ? '#e8d48b' : color ?? '#c9a227'
+  return (
+    <g transform={`translate(${x}, ${y})`} className="pointer-events-none">
+      {active && (
+        <circle r="14" fill={fill} opacity="0.15">
+          <animate attributeName="r" values="10;18;10" dur="2.5s" repeatCount="indefinite" />
+          <animate attributeName="opacity" values="0.2;0.05;0.2" dur="2.5s" repeatCount="indefinite" />
+        </circle>
+      )}
+      <path
+        d="M0,-9 L5,0 L0,9 L-5,0 Z"
+        fill={fill}
+        stroke="#0a0a0f"
+        strokeWidth="1"
+        opacity={active ? 1 : 0.75}
+      />
+      <circle r="2.5" fill="#0a0a0f" />
+    </g>
+  )
+}
+
+function OrnateCorner({ x, y, rotate }: { x: number; y: number; rotate: number }) {
+  return (
+    <g transform={`translate(${x}, ${y}) rotate(${rotate})`} opacity="0.45">
+      <path
+        d="M0,0 L30,0 M0,0 L0,30 M0,0 C15,5 25,15 30,30"
+        fill="none"
+        stroke="#c9a227"
+        strokeWidth="1.2"
+      />
+      <circle cx="0" cy="0" r="3" fill="#c9a227" opacity="0.6" />
+    </g>
+  )
+}
+
 function CompassRose() {
   return (
-    <g transform="translate(780, 80)" opacity="0.5">
-      <circle r="28" fill="none" stroke="#c9a227" strokeWidth="0.5" />
-      <path d="M0,-22 L4,0 L0,22 L-4,0 Z" fill="#c9a227" opacity="0.6" />
-      <path d="M-22,0 L0,-4 L22,0 L0,4 Z" fill="#c9a227" opacity="0.3" />
-      <text y="38" textAnchor="middle" className="font-heading text-[9px] fill-ember/50">
-        Пн
+    <g transform="translate(900, 115)" opacity="0.7">
+      <circle r="42" fill="rgba(10,8,15,0.6)" stroke="rgba(201,162,39,0.3)" strokeWidth="1" />
+      <circle r="36" fill="none" stroke="rgba(201,162,39,0.15)" strokeWidth="0.5" strokeDasharray="3 4" />
+      <path d="M0,-32 L6,0 L0,32 L-6,0 Z" fill="rgba(201,162,39,0.7)" />
+      <path d="M-32,0 L0,-6 L32,0 L0,6 Z" fill="rgba(201,162,39,0.25)" />
+      <path d="M0,-20 L3,0 L0,20 L-3,0 Z" fill="rgba(139,38,53,0.5)" transform="rotate(45)" />
+      <path d="M0,-20 L3,0 L0,20 L-3,0 Z" fill="rgba(139,38,53,0.5)" transform="rotate(-45)" />
+      <circle r="4" fill="#c9a227" />
+      <text y="52" textAnchor="middle" fill="rgba(201,162,39,0.5)" fontSize="9" fontFamily="Cinzel, serif">
+        ПІВНІЧ
       </text>
     </g>
   )
 }
 
+function MapLabel({
+  x,
+  y,
+  name,
+  sub,
+  active,
+}: {
+  x: number
+  y: number
+  name: string
+  sub?: string
+  active: boolean
+}) {
+  return (
+    <g className="pointer-events-none select-none">
+      <text
+        x={x}
+        y={y}
+        textAnchor="middle"
+        fill={active ? '#f0dfa0' : 'rgba(220,200,150,0.85)'}
+        fontSize={active ? 14 : 12}
+        fontFamily="Cinzel, serif"
+        fontWeight={active ? 700 : 400}
+        stroke="rgba(10,8,15,0.8)"
+        strokeWidth="3"
+        paintOrder="stroke"
+      >
+        {name}
+      </text>
+      {sub && (
+        <text
+          x={x}
+          y={y + 16}
+          textAnchor="middle"
+          fill="rgba(107,91,122,0.8)"
+          fontSize="9"
+          fontFamily="Cormorant Garamond, serif"
+          fontStyle="italic"
+          stroke="rgba(10,8,15,0.6)"
+          strokeWidth="2"
+          paintOrder="stroke"
+        >
+          {sub}
+        </text>
+      )}
+    </g>
+  )
+}
+
 export function WorldMap({ selected, onSelect }: Props) {
+  const [hovered, setHovered] = useState<string | null>(null)
+
   const activeRealm =
     selected === empireCenter.id
       ? empireCenter
       : realms.find((r) => r.id === selected) ?? null
 
-  const handleRegionClick = (id: string) => {
+  const handleClick = (id: string) => {
     onSelect(selected === id ? null : id)
   }
 
+  const isLit = (id: string) => selected === id || hovered === id
+
   return (
-    <div className="grid items-start gap-8 lg:grid-cols-[1fr_auto]">
-      <div className="rpg-map-frame relative overflow-hidden rounded-xl p-3 md:p-5">
-        <div className="rpg-map-inner relative overflow-hidden rounded-lg">
-          <svg
-            viewBox="0 0 900 520"
-            className="w-full"
-            aria-label="Карта Етельморну"
-            role="img"
-          >
+    <div className="flex flex-col gap-6 lg:flex-row lg:items-start">
+      <div className="rpg-map-frame relative flex-1">
+        <div className="map-frame-ornament map-frame-ornament--tl" />
+        <div className="map-frame-ornament map-frame-ornament--tr" />
+        <div className="map-frame-ornament map-frame-ornament--bl" />
+        <div className="map-frame-ornament map-frame-ornament--br" />
+
+        <div className="px-4 pt-5 text-center md:px-6">
+          <p className="font-heading text-[10px] tracking-[0.45em] text-ember/40">CARTA IMPERII</p>
+          <h3 className="font-heading text-lg tracking-[0.2em] text-ember/70 md:text-xl">ЕТЕЛЬМОРН</h3>
+        </div>
+
+        <div className="rpg-map-inner relative mx-3 mb-3 mt-2 md:mx-5 md:mb-5">
+          <div className="map-fog-overlay pointer-events-none absolute inset-0 z-10" />
+          <div className="map-vignette pointer-events-none absolute inset-0 z-10" />
+
+          <svg viewBox="0 0 1000 600" className="relative z-0 w-full" aria-label="Карта Етельморну">
             <defs>
-              <filter id="mapTexture">
-                <feTurbulence type="fractalNoise" baseFrequency="0.04" numOctaves="4" result="noise" />
-                <feDiffuseLighting in="noise" lightingColor="#c9a227" surfaceScale="1.5" result="light">
-                  <feDistantLight azimuth="45" elevation="60" />
-                </feDiffuseLighting>
-                <feBlend in="SourceGraphic" in2="light" mode="multiply" />
-              </filter>
-              <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(201,162,39,0.04)" strokeWidth="0.5" />
+              {realms.map((r) => (
+                <linearGradient key={r.id} id={`grad-${r.id}`} x1="0%" y1="0%" x2="60%" y2="100%">
+                  <stop offset="0%" stopColor={r.gradientFrom} />
+                  <stop offset="100%" stopColor={r.gradientTo} />
+                </linearGradient>
+              ))}
+              <linearGradient id="grad-empire" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="rgba(201,162,39,0.2)" />
+                <stop offset="100%" stopColor="rgba(139,38,53,0.12)" />
+              </linearGradient>
+              <radialGradient id="seaGrad" cx="50%" cy="45%" r="65%">
+                <stop offset="0%" stopColor="#12101c" />
+                <stop offset="55%" stopColor="#08061a" />
+                <stop offset="100%" stopColor="#030208" />
+              </radialGradient>
+              <pattern id="waves" width="40" height="12" patternUnits="userSpaceOnUse">
+                <path
+                  d="M0,6 Q10,2 20,6 T40,6"
+                  fill="none"
+                  stroke="rgba(80,120,160,0.06)"
+                  strokeWidth="1"
+                />
               </pattern>
+              <pattern id="mapGrid" width="50" height="50" patternUnits="userSpaceOnUse">
+                <path d="M50,0 L0,0 0,50" fill="none" stroke="rgba(201,162,39,0.03)" strokeWidth="0.5" />
+              </pattern>
+              <filter id="coastGlow" x="-20%" y="-20%" width="140%" height="140%">
+                <feGaussianBlur stdDeviation="3" result="blur" />
+                <feMerge>
+                  <feMergeNode in="blur" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+              <filter id="regionGlow" x="-30%" y="-30%" width="160%" height="160%">
+                <feDropShadow dx="0" dy="0" stdDeviation="6" floodColor="#c9a227" floodOpacity="0.5" />
+              </filter>
             </defs>
 
-            <rect width="900" height="520" fill="#0e0c14" />
-            <rect width="900" height="520" fill="url(#grid)" />
+            {/* Ocean */}
+            <rect width="1000" height="600" fill="url(#seaGrad)" />
+            <rect width="1000" height="600" fill="url(#waves)" />
+            <rect width="1000" height="600" fill="url(#mapGrid)" />
 
             {/* Sea labels */}
-            <text x="80" y="480" className="font-heading text-[11px] fill-mist/20 italic">
-              Східні Води
+            <text x="60" y="560" fill="rgba(80,100,140,0.25)" fontSize="13" fontFamily="Cormorant Garamond, serif" fontStyle="italic">
+              Західні Води
             </text>
-            <text x="720" y="500" className="font-heading text-[11px] fill-mist/20 italic">
-              Завіса
+            <text x="820" y="575" fill="rgba(80,100,140,0.25)" fontSize="13" fontFamily="Cormorant Garamond, serif" fontStyle="italic">
+              Море Завіси
             </text>
 
-            {/* Empire center — clickable */}
-            <motion.path
-              d={empireCenter.mapPath}
-              fill={selected === empireCenter.id ? 'rgba(201,162,39,0.25)' : 'rgba(201,162,39,0.08)'}
-              stroke={selected === empireCenter.id ? '#c9a227' : 'rgba(201,162,39,0.35)'}
-              strokeWidth={selected === empireCenter.id ? 2 : 1}
-              strokeDasharray="4 3"
-              className="cursor-pointer"
-              onClick={() => handleRegionClick(empireCenter.id)}
-              whileHover={{ fill: 'rgba(201,162,39,0.18)' }}
-              filter="url(#mapTexture)"
+            {/* Continent shadow */}
+            <path
+              d={continentCoast}
+              fill="rgba(0,0,0,0.5)"
+              transform="translate(6, 8)"
             />
 
+            {/* Continent land base */}
+            <path
+              d={continentCoast}
+              fill="#141018"
+              stroke="rgba(201,162,39,0.15)"
+              strokeWidth="1.5"
+              filter="url(#coastGlow)"
+            />
+
+            {/* Mountain ranges — decorative */}
+            <path d="M 350,200 L 370,175 L 390,195 L 410,170 L 430,190" fill="none" stroke="rgba(60,50,70,0.4)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M 600,350 L 620,325 L 640,345 L 660,320" fill="none" stroke="rgba(60,50,70,0.35)" strokeWidth="1.5" strokeLinecap="round" />
+            <path d="M 480,280 L 495,260 L 510,275 L 525,255 L 540,270" fill="none" stroke="rgba(201,162,39,0.15)" strokeWidth="1" strokeLinecap="round" />
+
+            {/* Trade routes */}
+            {tradeRoutes.map((d, i) => (
+              <path
+                key={i}
+                d={d}
+                fill="none"
+                stroke="rgba(201,162,39,0.08)"
+                strokeWidth="1"
+                strokeDasharray="4 6"
+              />
+            ))}
+
+            {/* Regions */}
             {realms.map((realm) => {
-              const isActive = selected === realm.id
+              const lit = isLit(realm.id)
               return (
-                <g key={realm.id}>
+                <g
+                  key={realm.id}
+                  onMouseEnter={() => setHovered(realm.id)}
+                  onMouseLeave={() => setHovered(null)}
+                  className="cursor-pointer"
+                  onClick={() => handleClick(realm.id)}
+                >
                   <motion.path
                     d={realm.mapPath}
-                    fill={isActive ? `${realm.color}cc` : `${realm.color}66`}
-                    stroke={isActive ? '#c9a227' : 'rgba(201,162,39,0.25)'}
-                    strokeWidth={isActive ? 2.5 : 1}
-                    className="cursor-pointer transition-all"
-                    onClick={() => handleRegionClick(realm.id)}
-                    whileHover={{
-                      fill: `${realm.color}aa`,
-                      stroke: 'rgba(201,162,39,0.6)',
-                    }}
-                    style={{
-                      filter: isActive ? `drop-shadow(0 0 12px ${realm.glow})` : undefined,
-                    }}
+                    fill={`url(#grad-${realm.id})`}
+                    stroke={lit ? '#e8d48b' : 'rgba(201,162,39,0.12)'}
+                    strokeWidth={lit ? 2 : 0.8}
+                    animate={{ opacity: lit ? 1 : 0.88 }}
+                    transition={{ duration: 0.25 }}
+                    filter={lit ? 'url(#regionGlow)' : undefined}
                   />
-                  {/* Region label */}
-                  <text
-                    x={realm.labelX}
-                    y={realm.labelY}
-                    textAnchor="middle"
-                    className="pointer-events-none select-none font-heading text-[11px] md:text-[13px]"
-                    fill={isActive ? '#e8d48b' : 'rgba(201,162,39,0.7)'}
-                    style={{ textShadow: '0 1px 4px rgba(0,0,0,0.8)' }}
-                  >
-                    {realm.name}
-                  </text>
-                  {/* Capital marker */}
-                  <circle
-                    cx={realm.labelX}
-                    cy={realm.labelY + 14}
-                    r="2"
-                    fill={isActive ? '#c9a227' : 'rgba(201,162,39,0.4)'}
-                    className="pointer-events-none"
-                  />
-                  <text
-                    x={realm.labelX}
-                    y={realm.labelY + 26}
-                    textAnchor="middle"
-                    className="pointer-events-none select-none font-body text-[9px] italic"
-                    fill="rgba(107,91,122,0.7)"
-                  >
-                    {realm.capital}
-                  </text>
+                  {lit && (
+                    <path
+                      d={realm.mapPath}
+                      fill="none"
+                      stroke={realm.glow.replace(/[\d.]+\)$/, '0.4)')}
+                      strokeWidth="4"
+                      opacity="0.6"
+                    />
+                  )}
                 </g>
               )
             })}
 
-            {/* Empire label */}
-            <text
-              x={empireCenter.labelX}
-              y={empireCenter.labelY}
-              textAnchor="middle"
-              className="pointer-events-none font-heading text-[10px] fill-ember/50"
+            {/* Empire center */}
+            <g
+              onMouseEnter={() => setHovered(empireCenter.id)}
+              onMouseLeave={() => setHovered(null)}
+              className="cursor-pointer"
+              onClick={() => handleClick(empireCenter.id)}
             >
-              {empireCenter.name}
-            </text>
+              <motion.path
+                d={empireCenter.mapPath}
+                fill="url(#grad-empire)"
+                stroke={isLit(empireCenter.id) ? '#c9a227' : 'rgba(201,162,39,0.25)'}
+                strokeWidth={isLit(empireCenter.id) ? 2 : 1}
+                strokeDasharray="5 4"
+                animate={{ opacity: isLit(empireCenter.id) ? 1 : 0.7 }}
+              />
+              {isLit(empireCenter.id) && (
+                <path
+                  d={empireCenter.mapPath}
+                  fill="none"
+                  stroke="rgba(201,162,39,0.3)"
+                  strokeWidth="6"
+                />
+              )}
+            </g>
 
-            <CompassRose />
-
-            {/* Decorative border inside SVG */}
-            <rect
-              x="8"
-              y="8"
-              width="884"
-              height="504"
+            {/* Coast line highlight */}
+            <path
+              d={continentCoast}
               fill="none"
               stroke="rgba(201,162,39,0.2)"
               strokeWidth="1"
-              rx="4"
             />
-            <rect
-              x="14"
-              y="14"
-              width="872"
-              height="492"
-              fill="none"
-              stroke="rgba(201,162,39,0.1)"
-              strokeWidth="0.5"
-              rx="2"
-            />
-          </svg>
 
-          {/* Corner ornaments */}
-          <span className="pointer-events-none absolute left-5 top-5 font-heading text-ember/20">◆</span>
-          <span className="pointer-events-none absolute right-5 top-5 font-heading text-ember/20">◆</span>
-          <span className="pointer-events-none absolute bottom-5 left-5 font-heading text-ember/20">◆</span>
-          <span className="pointer-events-none absolute bottom-5 right-5 font-heading text-ember/20">◆</span>
+            {/* Labels & pins */}
+            {realms.map((realm) => (
+              <g key={`label-${realm.id}`}>
+                <CapitalPin
+                  x={realm.pinX}
+                  y={realm.pinY}
+                  active={isLit(realm.id)}
+                  color={realm.color}
+                />
+                <MapLabel
+                  x={realm.labelX}
+                  y={realm.labelY}
+                  name={realm.name}
+                  sub={realm.capital}
+                  active={isLit(realm.id)}
+                />
+              </g>
+            ))}
+
+            <CapitalPin
+              x={empireCenter.pinX}
+              y={empireCenter.pinY}
+              active={isLit(empireCenter.id)}
+            />
+            <MapLabel
+              x={empireCenter.labelX}
+              y={empireCenter.labelY - 10}
+              name={empireCenter.name}
+              sub="Мертве Серце"
+              active={isLit(empireCenter.id)}
+            />
+
+            <CompassRose />
+            <OrnateCorner x={30} y={30} rotate={0} />
+            <OrnateCorner x={970} y={30} rotate={90} />
+            <OrnateCorner x={30} y={570} rotate={-90} />
+            <OrnateCorner x={970} y={570} rotate={180} />
+
+            {/* Inner map border */}
+            <rect x="20" y="20" width="960" height="560" fill="none" stroke="rgba(201,162,39,0.12)" strokeWidth="1" rx="2" />
+            <rect x="26" y="26" width="948" height="548" fill="none" stroke="rgba(201,162,39,0.06)" strokeWidth="0.5" rx="1" />
+          </svg>
         </div>
 
-        <p className="mt-3 text-center font-body text-sm italic text-mist/40">
-          Клацни на державу
+        <p className="pb-4 text-center font-body text-sm italic text-mist/35">
+          Наведи курсор · Клацни на державу
         </p>
       </div>
 
-      <AnimatePresence mode="wait">
-        {activeRealm && (
-          <MapInfoPanel
-            key={activeRealm.id}
-            realm={activeRealm}
-            onClose={() => onSelect(null)}
-          />
-        )}
-      </AnimatePresence>
+      <div className="lg:w-80 lg:shrink-0">
+        <AnimatePresence mode="wait">
+          {activeRealm ? (
+            <MapInfoPanel
+              key={activeRealm.id}
+              realm={activeRealm}
+              onClose={() => onSelect(null)}
+            />
+          ) : (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="map-info-panel map-info-panel--empty hidden rounded-xl p-6 lg:block"
+            >
+              <p className="font-heading text-[10px] tracking-[0.3em] text-ember/30">ЛЕГЕНДА</p>
+              <p className="mt-4 font-body text-base italic text-mist/40">
+                Обери державу на карті — і Архів відкриє її хроніку.
+              </p>
+              <div className="mt-6 space-y-2">
+                {realms.map((r) => (
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => handleClick(r.id)}
+                    className="flex w-full items-center gap-3 rounded border border-transparent px-2 py-1.5 text-left transition-colors hover:border-ember/15 hover:bg-ember/5"
+                  >
+                    <span
+                      className="h-2.5 w-2.5 shrink-0 rotate-45 border border-ember/40"
+                      style={{ background: r.gradientFrom }}
+                    />
+                    <span className="font-heading text-xs tracking-wide text-mist/60">{r.name}</span>
+                  </button>
+                ))}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
     </div>
   )
 }

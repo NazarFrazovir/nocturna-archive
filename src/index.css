@@ -138,15 +138,95 @@ h4 {
 }
 
 .rpg-map-frame {
-  background: linear-gradient(145deg, rgba(18, 16, 26, 0.95), rgba(10, 8, 15, 0.98));
-  border: 1px solid rgba(201, 162, 39, 0.18);
+  position: relative;
+  background:
+    linear-gradient(160deg, rgba(22, 18, 30, 0.98) 0%, rgba(8, 6, 14, 1) 100%);
+  border: 1px solid rgba(201, 162, 39, 0.22);
+  border-radius: 1rem;
   box-shadow:
-    inset 0 0 80px rgba(0, 0, 0, 0.6),
-    0 0 50px rgba(201, 162, 39, 0.04);
+    0 0 0 1px rgba(201, 162, 39, 0.06),
+    0 20px 60px rgba(0, 0, 0, 0.7),
+    0 0 80px rgba(201, 162, 39, 0.04),
+    inset 0 1px 0 rgba(201, 162, 39, 0.1);
 }
 
 .rpg-map-inner {
-  background: radial-gradient(ellipse at 45% 40%, #14101f 0%, #08060e 100%);
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(201, 162, 39, 0.1);
+  background: #030208;
+  box-shadow: inset 0 0 100px rgba(0, 0, 0, 0.8);
+}
+
+.map-fog-overlay {
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(107, 91, 122, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse at 75% 70%, rgba(42, 31, 61, 0.15) 0%, transparent 45%);
+  animation: mapFog 10s ease-in-out infinite alternate;
+}
+
+.map-vignette {
+  background: radial-gradient(ellipse at center, transparent 50%, rgba(3, 2, 8, 0.7) 100%);
+}
+
+@keyframes mapFog {
+  from { opacity: 0.6; }
+  to { opacity: 1; }
+}
+
+.map-frame-ornament {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  border-color: rgba(201, 162, 39, 0.35);
+  pointer-events: none;
+}
+
+.map-frame-ornament--tl {
+  top: 10px;
+  left: 10px;
+  border-top: 2px solid;
+  border-left: 2px solid;
+}
+
+.map-frame-ornament--tr {
+  top: 10px;
+  right: 10px;
+  border-top: 2px solid;
+  border-right: 2px solid;
+}
+
+.map-frame-ornament--bl {
+  bottom: 10px;
+  left: 10px;
+  border-bottom: 2px solid;
+  border-left: 2px solid;
+}
+
+.map-frame-ornament--br {
+  bottom: 10px;
+  right: 10px;
+  border-bottom: 2px solid;
+  border-right: 2px solid;
+}
+
+.map-info-panel {
+  background: linear-gradient(145deg, rgba(20, 18, 28, 0.95), rgba(12, 10, 18, 0.98));
+  border: 1px solid rgba(201, 162, 39, 0.15);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.map-info-panel--empty {
+  border-style: dashed;
+  border-color: rgba(201, 162, 39, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .map-fog-overlay {
+    animation: none;
+    opacity: 0.8;
+  }
 }
 
 .section-title::after {
