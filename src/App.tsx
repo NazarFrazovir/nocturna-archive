@@ -16,6 +16,7 @@ import { OracleSection } from './components/oracle/OracleSection'
 import { SagaSection } from './components/saga/SagaSection'
 import { EclipseOverlay } from './components/layout/EclipseOverlay'
 import { ArchiveAudioProvider } from './context/ArchiveAudioContext'
+import { ThemeNowPlaying } from './components/layout/ThemeNowPlaying'
 
 function App() {
   useLenis()
@@ -46,6 +47,7 @@ function App() {
         <OracleSection />
       </main>
       <Footer />
+      <ThemeNowPlaying />
     </ArchiveAudioProvider>
   )
 }

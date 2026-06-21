@@ -30,7 +30,7 @@ export class ArchiveAudioEngine {
   private windSource: AudioBufferSourceNode | null = null
   private running = false
   private currentProfile = HERO_PROFILE
-  private themeOnHero = false
+  private themePlaying = false
 
   async start(): Promise<void> {
     if (this.running) {
@@ -96,7 +96,7 @@ export class ArchiveAudioEngine {
     this.running = true
 
     await ctx.resume()
-    this.fadeMasterTo(this.themeOnHero ? MASTER_DUCKED : MASTER_VOLUME)
+    this.fadeMasterTo(this.themePlaying ? MASTER_DUCKED : MASTER_VOLUME)
   }
 
   private applyProfile(
@@ -111,7 +111,7 @@ export class ArchiveAudioEngine {
     lfoGain: GainNode,
   ) {
     const now = ctx.currentTime
-    const duck = this.themeOnHero
+    const duck = this.themePlaying
 
     oscA.frequency.setTargetAtTime(profile.droneA, now, 0.8)
     oscB.frequency.setTargetAtTime(profile.droneB, now, 0.8)
@@ -130,8 +130,8 @@ export class ArchiveAudioEngine {
     this.applyProfile(profile, this.ctx, this.oscA, this.oscB, this.windFilter, this.droneGain, this.windGain, this.lfo, this.lfoGain)
   }
 
-  setThemeOnHero(active: boolean) {
-    this.themeOnHero = active
+  setThemePlaying(active: boolean) {
+    this.themePlaying = active
     if (!this.running) return
 
     themeMusic.setVisible(active)
@@ -142,8 +142,8 @@ export class ArchiveAudioEngine {
     }
   }
 
-  isThemeOnHero() {
-    return this.themeOnHero
+  isThemePlaying() {
+    return this.themePlaying
   }
 
   private fadeMasterTo(target: number) {
@@ -160,8 +160,8 @@ export class ArchiveAudioEngine {
   }
 
   unmute() {
-    this.fadeMasterTo(this.themeOnHero ? MASTER_DUCKED : MASTER_VOLUME)
-    if (this.themeOnHero) themeMusic.setVisible(true)
+    this.fadeMasterTo(this.themePlaying ? MASTER_DUCKED : MASTER_VOLUME)
+    if (this.themePlaying) themeMusic.setVisible(true)
   }
 
   playRealmStinger(realmId: string) {
@@ -218,7 +218,7 @@ export class ArchiveAudioEngine {
       this.ctx?.close()
       this.ctx = null
       this.running = false
-      this.themeOnHero = false
+      this.themePlaying = false
     }, FADE_MS + 100)
   }
 

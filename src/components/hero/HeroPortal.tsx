@@ -2,7 +2,7 @@ import { motion } from 'framer-motion'
 import { RuneField } from './RuneField'
 import { useMouseParallax } from '../../hooks/useMouseParallax'
 import { useArchiveProgress } from '../../hooks/useArchiveProgress'
-import { HeroThemeTrack } from './HeroThemeTrack'
+
 
 function useNightMode() {
   const hour = new Date().getHours()
@@ -44,7 +44,6 @@ export function HeroPortal() {
         }}
       />
       <RuneField />
-      <HeroThemeTrack />
 
       <motion.div
         className="relative z-10 max-w-4xl text-center"

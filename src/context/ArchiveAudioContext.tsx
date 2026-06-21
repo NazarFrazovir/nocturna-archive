@@ -20,7 +20,7 @@ const STORAGE_KEY = 'nocturna-audio-enabled'
 
 interface ArchiveAudioContextValue {
   enabled: boolean
-  themeOnHero: boolean
+  themePlaying: boolean
   toggle: () => void
   selectedRealm: string | null
   setSelectedRealm: (id: string | null) => void
@@ -48,13 +48,11 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
       localStorage.setItem(STORAGE_KEY, 'false')
     } else {
       await audioEngine.start()
-      if (activeSection === 'hero') {
-        audioEngine.setThemeOnHero(true)
-      }
+      audioEngine.setThemePlaying(true)
       setEnabled(true)
       localStorage.setItem(STORAGE_KEY, 'true')
     }
-  }, [enabled, activeSection])
+  }, [enabled])
 
   useEffect(() => {
     if (!enabled) return
@@ -71,24 +69,26 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
       profile = { ...DEFAULT_PROFILE, windGain: 0.06, droneGain: 0.04, lfoRate: 0.1 }
     }
 
-    const onHero = activeSection === 'hero'
-
     if (audioEngine.isRunning()) {
-      audioEngine.setThemeOnHero(enabled && onHero)
+      audioEngine.setThemePlaying(true)
       audioEngine.crossfadeTo(profile)
     }
   }, [enabled, activeSection, selectedRealm])
 
   useEffect(() => {
     if (enabled) {
-      audioEngine.start()
+      audioEngine.start().then(() => {
+        audioEngine.setThemePlaying(true)
+      })
     }
   }, [])
 
   useEffect(() => {
     if (!enabled) return
     const resume = () => {
-      if (!audioEngine.isRunning()) audioEngine.start()
+      if (!audioEngine.isRunning()) {
+        audioEngine.start().then(() => audioEngine.setThemePlaying(true))
+      }
     }
     window.addEventListener('pointerdown', resume, { once: true })
     return () => window.removeEventListener('pointerdown', resume)
@@ -98,12 +98,12 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
     if (enabled) audioEngine.playPageTurn()
   }, [enabled])
 
-  const themeOnHero = enabled && activeSection === 'hero'
+  const themePlaying = enabled
 
   const value = useMemo(
     () => ({
       enabled,
-      themeOnHero,
+      themePlaying,
       toggle,
       selectedRealm,
       setSelectedRealm: (id: string | null) => {
@@ -114,7 +114,7 @@ export function ArchiveAudioProvider({ children }: { children: ReactNode }) {
       },
       playPageTurn,
     }),
-    [enabled, themeOnHero, toggle, selectedRealm, playPageTurn],
+    [enabled, themePlaying, toggle, selectedRealm, playPageTurn],
   )
 
   return (
