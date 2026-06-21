@@ -21,7 +21,7 @@ export function RealmMap({ realms, selected, onSelect }: Props) {
 
   return (
     <div className="relative mx-auto w-full max-w-[320px]">
-      <svg viewBox="0 0 300 300" className="w-full" aria-label="Мапа семи царств">
+      <svg viewBox="0 0 300 300" className="w-full" aria-label="Мапа семи держав">
         <defs>
           <radialGradient id="mapGlow">
             <stop offset="0%" stopColor="rgba(201,162,39,0.15)" />
@@ -89,7 +89,7 @@ export function RealmMap({ realms, selected, onSelect }: Props) {
       </svg>
 
       <p className="mt-4 text-center font-body text-sm italic text-mist/50">
-        Обери царство на мапі
+        Обери державу на мапі
       </p>
     </div>
   )

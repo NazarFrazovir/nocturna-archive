@@ -3,7 +3,7 @@ import { motion, useInView } from 'framer-motion'
 
 const stats = [
   { value: 844, suffix: '+', label: 'Років історії' },
-  { value: 7, suffix: '', label: 'Запечатаних царств' },
+  { value: 7, suffix: '', label: 'Запечатаних держав' },
   { value: 312, suffix: '', label: 'Записаних артефактів' },
   { value: 13, suffix: '', label: 'Чорнильників' },
 ]

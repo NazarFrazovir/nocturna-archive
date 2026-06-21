@@ -21,7 +21,7 @@ export const artifacts: Artifact[] = [
     name: 'Корона Затемнення',
     rarity: 'forbidden',
     description: 'Носив її останній імператор. Кожен камінь — затемнене сонце з іншого світу.',
-    origin: 'Мрачна Твердиня',
+    origin: 'Грімхольд',
     symbol: '♛',
   },
   {
@@ -29,7 +29,7 @@ export const artifacts: Artifact[] = [
     name: 'Уламок Завіси',
     rarity: 'forbidden',
     description: 'Крихітний шматок завіси між світами. Дивитися в нього — бачити те, що ще не сталося.',
-    origin: 'Порожня Вежа',
+    origin: 'Шпилес',
     symbol: '◇',
   },
   {
@@ -45,7 +45,7 @@ export const artifacts: Artifact[] = [
     name: 'Серце Терня',
     rarity: 'cursed',
     description: 'Б’ється раз на століття. Кожен удар — прокляття, що передається наступному поколінню.',
-    origin: 'Тернисте Болото',
+    origin: 'Торнмер',
     symbol: '♥',
   },
   {
@@ -53,7 +53,7 @@ export const artifacts: Artifact[] = [
     name: 'Урна Попелу',
     rarity: 'common',
     description: 'Містить попіл першого короля Попілової Завіси. Вітер не здуває — він пам’ятає.',
-    origin: 'Попілова Завіса',
+    origin: 'Ашвелія',
     symbol: '⚱',
   },
   {
@@ -61,7 +61,7 @@ export const artifacts: Artifact[] = [
     name: 'Залізна Рукавиця',
     rarity: 'cursed',
     description: 'Примарна рука досі стискає меч, якого вже немає. Той, хто одягне — не зможе відпустити.',
-    origin: 'Залізний Привид',
+    origin: 'Айронврайт',
     symbol: '✊',
   },
   {
@@ -69,7 +69,7 @@ export const artifacts: Artifact[] = [
     name: 'Сутінкове Дзеркало',
     rarity: 'cursed',
     description: 'Відбиває не обличчя, а вибір, якого ти не зробив. Іноді воно плаче.',
-    origin: 'Сутінкова Тьма',
+    origin: 'Дускмір',
     symbol: '◈',
   },
   {
@@ -77,7 +77,7 @@ export const artifacts: Artifact[] = [
     name: 'Нічний Ліхтар',
     rarity: 'common',
     description: 'Світить лише для тих, хто втратив шлях. Полум’я холодне, як пам’ять.',
-    origin: 'Нічний Болот',
+    origin: 'Найтфен',
     symbol: '✦',
   },
   {
@@ -85,7 +85,7 @@ export const artifacts: Artifact[] = [
     name: 'Порожній Ключ',
     rarity: 'forbidden',
     description: 'Відкриває двері, яких не існує. За ними — тиша, від якої глухнуть боги.',
-    origin: 'Порожня Вежа',
+    origin: 'Шпилес',
     symbol: '⚿',
   },
   {
@@ -101,7 +101,7 @@ export const artifacts: Artifact[] = [
     name: 'Печать Мраку',
     rarity: 'forbidden',
     description: 'Сім печаток утримують короля в Мрачній Твердині. Це — перша. Розбити — значить почати війну.',
-    origin: 'Мрачна Твердиня',
+    origin: 'Грімхольд',
     symbol: '⊛',
   },
   {
@@ -109,7 +109,7 @@ export const artifacts: Artifact[] = [
     name: 'Шепіт Болота',
     rarity: 'common',
     description: 'Скляна куля з туманом усередині. Якщо прислухатися — болото розповість твоє майбутнє.',
-    origin: 'Нічний Болот',
+    origin: 'Найтфен',
     symbol: '◎',
   },
 ]

@@ -4,7 +4,7 @@ import { useActiveSection } from '../../hooks/useActiveSection'
 
 const links = [
   { href: '#hero', id: 'hero', label: 'Вхід' },
-  { href: '#realms', id: 'realms', label: 'Царства' },
+  { href: '#realms', id: 'realms', label: 'Держави' },
   { href: '#inkkeepers', id: 'inkkeepers', label: 'Орден' },
   { href: '#codex', id: 'codex', label: 'Кодекс' },
   { href: '#chronicles', id: 'chronicles', label: 'Хроніки' },

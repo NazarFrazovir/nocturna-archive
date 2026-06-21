@@ -41,6 +41,7 @@ export function RealmCard({ realm, index, isSelected, onSelect }: Props) {
           </span>
         </div>
 
+        <p className="font-heading text-[10px] tracking-widest text-mist/50">{realm.stateType}</p>
         <h3 className="font-heading text-xl tracking-wide">{realm.name}</h3>
         <p className="mt-3 font-body text-base leading-relaxed text-mist">{realm.description}</p>
 

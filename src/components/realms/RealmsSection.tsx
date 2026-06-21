@@ -16,10 +16,10 @@ export function RealmsSection() {
     <section id="realms" className="relative px-6 py-24 md:py-32">
       <div className="absolute inset-0 bg-gradient-to-b from-void via-obsidian/30 to-void" />
       <div className="relative mx-auto max-w-6xl">
-        <h2 className="section-title">Сім Проклятих Царств</h2>
+        <h2 className="section-title">Сім Проклятих Держав</h2>
         <p className="section-subtitle">
-          Після Війни Останнього Затемнення сім королівств було запечатано за завісою вічної ночі.
-          Їхні імена стерто — але Архів пам’ятає.
+          Після Війни Останнього Затемнення сім суверенних держав Етельморну було запечатано за завісою.
+          Їхні кордони стерто з мап — але Архів пам’ятає кожну столицю.
         </p>
 
         <div className="mb-16 flex justify-center">
