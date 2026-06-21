@@ -11,6 +11,7 @@ import type { SagaBook, SagaChapter } from '../../data/saga'
 import { characters } from '../../data/characters'
 import { factions } from '../../data/factions'
 import { useArchiveProgress } from '../../hooks/useArchiveProgress'
+import { useArchiveAudio } from '../../context/ArchiveAudioContext'
 
 type SagaView = 'library' | 'toc' | 'read'
 
@@ -39,6 +40,7 @@ export function SagaSection() {
   const [activeChapter, setActiveChapter] = useState<SagaChapter | null>(null)
   const [isRevisit, setIsRevisit] = useState(false)
   const { markChapterRead, isChapterRead } = useArchiveProgress()
+  const { playPageTurn } = useArchiveAudio()
 
   const openBook = useCallback((book: SagaBook) => {
     setActiveBook(book)
@@ -49,7 +51,8 @@ export function SagaSection() {
     setIsRevisit(isChapterRead(chapter.id))
     setActiveChapter(chapter)
     setView('read')
-  }, [isChapterRead])
+    playPageTurn()
+  }, [isChapterRead, playPageTurn])
 
   useEffect(() => {
     if (view === 'read' && activeChapter) {

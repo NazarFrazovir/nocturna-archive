@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useActiveSection } from '../../hooks/useActiveSection'
+import { AudioToggle } from './AudioToggle'
 
 const links = [
   { href: '#hero', id: 'hero', label: 'Вхід' },
@@ -46,7 +47,8 @@ export function Header() {
             NOCTURNA
           </a>
 
-          <ul className="hidden items-center gap-6 lg:flex">
+          <div className="hidden items-center gap-5 lg:flex">
+          <ul className="flex items-center gap-6">
             {links.map((link) => (
               <li key={link.href}>
                 <a
@@ -66,17 +68,22 @@ export function Header() {
               </li>
             ))}
           </ul>
+          <AudioToggle />
+          </div>
 
+          <div className="flex items-center gap-3 lg:hidden">
+            <AudioToggle />
           <button
             type="button"
             onClick={() => setMenuOpen(!menuOpen)}
-            className="flex flex-col gap-1.5 p-2 lg:hidden"
+            className="flex flex-col gap-1.5 p-2"
             aria-label={menuOpen ? 'Закрити меню' : 'Відкрити меню'}
           >
             <span className={`block h-px w-6 bg-ember transition-transform ${menuOpen ? 'translate-y-[7px] rotate-45' : ''}`} />
             <span className={`block h-px w-6 bg-ember transition-opacity ${menuOpen ? 'opacity-0' : ''}`} />
             <span className={`block h-px w-6 bg-ember transition-transform ${menuOpen ? '-translate-y-[7px] -rotate-45' : ''}`} />
           </button>
+          </div>
         </nav>
       </motion.header>
 

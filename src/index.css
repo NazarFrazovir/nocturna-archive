@@ -503,3 +503,18 @@ h4 {
     animation: none;
   }
 }
+
+.audio-toggle-icon--on {
+  animation: audioPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes audioPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.45; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .audio-toggle-icon--on {
+    animation: none;
+  }
+}

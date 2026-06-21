@@ -2,12 +2,15 @@ import { useState } from 'react'
 import { realms } from '../../data/realms'
 import { RealmCard } from './RealmCard'
 import { WorldMap } from './WorldMap'
+import { useArchiveAudio } from '../../context/ArchiveAudioContext'
 
 export function RealmsSection() {
   const [selected, setSelected] = useState<string | null>(null)
+  const { setSelectedRealm } = useArchiveAudio()
 
   const handleSelect = (id: string | null) => {
     setSelected(id)
+    setSelectedRealm(id)
     if (id && id !== 'ethelmourn') {
       const el = document.getElementById(`realm-${id}`)
       el?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })

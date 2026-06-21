@@ -15,6 +15,7 @@ import { ChroniclesSection } from './components/chronicles/ChroniclesSection'
 import { OracleSection } from './components/oracle/OracleSection'
 import { SagaSection } from './components/saga/SagaSection'
 import { EclipseOverlay } from './components/layout/EclipseOverlay'
+import { ArchiveAudioProvider } from './context/ArchiveAudioContext'
 
 function App() {
   useLenis()
@@ -22,7 +23,7 @@ function App() {
   const onLoadComplete = useCallback(() => setLoaded(true), [])
 
   return (
-    <>
+    <ArchiveAudioProvider>
       {!loaded && <LoadingScreen onComplete={onLoadComplete} />}
       <EclipseOverlay />
       <FilmGrain />
@@ -45,7 +46,7 @@ function App() {
         <OracleSection />
       </main>
       <Footer />
-    </>
+    </ArchiveAudioProvider>
   )
 }
 
