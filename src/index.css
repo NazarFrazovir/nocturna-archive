@@ -1,0 +1,133 @@
+@import "tailwindcss";
+
+@theme {
+  --color-void: #0a0a0f;
+  --color-obsidian: #14141f;
+  --color-ember: #c9a227;
+  --color-blood: #8b2635;
+  --color-mist: #6b5b7a;
+  --color-veil: #2a1f3d;
+  --font-heading: "Cinzel", serif;
+  --font-body: "Cormorant Garamond", serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+body {
+  margin: 0;
+  background: var(--color-void);
+  color: #d4cdd8;
+  font-family: var(--font-body);
+  font-size: 1.125rem;
+  line-height: 1.6;
+  overflow-x: hidden;
+  cursor: none;
+}
+
+@media (max-width: 768px) {
+  body {
+    cursor: auto;
+    font-size: 1rem;
+  }
+}
+
+#root {
+  min-height: 100svh;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  font-family: var(--font-heading);
+  color: var(--color-ember);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+}
+
+::selection {
+  background: rgba(201, 162, 39, 0.35);
+  color: #fff;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+.glass-panel {
+  background: rgba(20, 20, 31, 0.65);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(201, 162, 39, 0.15);
+}
+
+.shimmer-border {
+  position: relative;
+}
+
+.shimmer-border::before {
+  content: "";
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    transparent 30%,
+    rgba(201, 162, 39, 0.5) 50%,
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+}
+
+.shimmer-border:hover::before {
+  opacity: 1;
+}
+
+.section-title {
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  text-align: center;
+  margin-bottom: 0.5rem;
+}
+
+.section-subtitle {
+  text-align: center;
+  color: var(--color-mist);
+  font-style: italic;
+  max-width: 36rem;
+  margin: 0 auto 3rem;
+  font-size: 1.25rem;
+}
