@@ -143,10 +143,20 @@ export function SagaSection() {
                       whileInView={{ opacity: 1, y: 0 }}
                       viewport={{ once: true }}
                       transition={{ delay: i * 0.04 }}
-                      className={`shimmer-border group rounded-lg border bg-obsidian/80 p-6 transition-colors hover:border-ember/25 ${
+                      className={`shimmer-border group overflow-hidden rounded-lg border bg-obsidian/80 transition-colors hover:border-ember/25 ${
                         c.appearsLate ? 'border-mist/10 opacity-80' : 'border-ember/10'
                       }`}
                     >
+                      <div className="saga-character-portrait relative aspect-[3/4] overflow-hidden">
+                        <img
+                          src={c.portrait}
+                          alt={c.name}
+                          loading="lazy"
+                          className="h-full w-full object-cover object-top transition-transform duration-500 group-hover:scale-105"
+                        />
+                        <div className="saga-character-portrait-vignette absolute inset-0" />
+                      </div>
+                      <div className="p-6">
                       <div className="flex items-center gap-2">
                         <p className="font-heading text-[10px] tracking-widest text-mist/40">{c.role}</p>
                         {c.isPov && (
@@ -170,6 +180,7 @@ export function SagaSection() {
                           {c.quote}
                         </p>
                       )}
+                      </div>
                     </motion.article>
                   ))}
                 </div>

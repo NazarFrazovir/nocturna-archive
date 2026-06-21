@@ -398,3 +398,14 @@ h4 {
 .saga-page-footer {
   font-family: var(--font-heading);
 }
+
+.saga-character-portrait {
+  border-bottom: 1px solid rgba(201, 162, 39, 0.1);
+}
+
+.saga-character-portrait-vignette {
+  background:
+    linear-gradient(to top, rgba(14, 12, 18, 0.85) 0%, transparent 45%),
+    linear-gradient(to bottom, rgba(14, 12, 18, 0.25) 0%, transparent 20%);
+  pointer-events: none;
+}

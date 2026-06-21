@@ -6,6 +6,7 @@ export interface Character {
   realm: string
   role: string
   description: string
+  portrait: string
   quote?: string
   isPov?: boolean
   appearsLate?: boolean
@@ -19,6 +20,7 @@ export const characters: Character[] = [
     house: 'Орден Чорнильників',
     realm: 'Архів Ноктурни',
     role: 'Рамка саги',
+    portrait: '/assets/characters/eira-inkkeeper.jpg',
     isPov: true,
     description:
       'Її імені немає в офіційному реєстрі тринадцяти — і це єдине, що дало їй право відкрити Архів першою. Вона веде прологи, епілоги та примітки в полях. Редагує історію, поки записує.',
@@ -31,6 +33,7 @@ export const characters: Character[] = [
     house: 'Рід Ашвелл',
     realm: 'Ашвелія',
     role: 'Претендентка',
+    portrait: '/assets/characters/liora-ashvell.jpg',
     isPov: true,
     description:
       'Єдина з роду, кого знайшли під попелом Ембервеллу. Вихована Чорнильниками в таємниці. Клялася повернути корону — або спалити те, що від неї лишилось. Не знає, що брат живий — у формі, якої світ не має назви.',
@@ -43,6 +46,7 @@ export const characters: Character[] = [
     house: 'Рід Ашвелл',
     realm: 'Ашвелія',
     role: 'Таємниця',
+    portrait: '/assets/characters/toren-ashvell.jpg',
     appearsLate: true,
     description:
       'Старший брат Ліори. Справжній спадкоємець, стертий з хронік Орденом після згоряння Ембервеллу. Не мертвий — попіловий. З’являється в кінці саги й відкриває сестрі, навіщо він пожертвував іменем.',
@@ -55,6 +59,7 @@ export const characters: Character[] = [
     house: 'Рід Миррен',
     realm: 'Торнмер',
     role: 'Князь',
+    portrait: '/assets/characters/mirren-thorn.jpg',
     isPov: true,
     description:
       'Править Торнмером, але не пам’ятає власного імені — лише титул. Болото забрало решту. Його POV ненадійний: читач не завжди знає, що реальне.',
@@ -67,6 +72,7 @@ export const characters: Character[] = [
     house: 'Рід Нокталь',
     realm: 'Дускмір',
     role: 'Інтриганка',
+    portrait: '/assets/characters/soria-noctal.jpg',
     isPov: true,
     description:
       'Править Дускміром залізною рукою в рукавичці з шовку. Печатниця з ідеалами. Вважає, що завіса — зброя, а не прокляття. Торгує сном, як інші — зерном.',
@@ -79,6 +85,7 @@ export const characters: Character[] = [
     house: 'Рід Залізноград',
     realm: 'Айронврайт',
     role: 'Воєначальник',
+    portrait: '/assets/characters/markus-ironwraith.jpg',
     isPov: true,
     description:
       'Вбитий у Війні Останнього Затемнення — і все ще командує вартою. POV через накази й звіти. Його зупинка походу — перший знак, що правила змінились.',
@@ -91,6 +98,7 @@ export const characters: Character[] = [
     house: 'Рада Башти',
     realm: 'Шпилес',
     role: 'Чарівниця',
+    portrait: '/assets/characters/vehra-spire.jpg',
     isPov: true,
     description:
       'Піднялась на сорок сьомий поверх Порожньої Вежі — і повернулась з силою, якої не мала до того. Бачить розгалуження майбутнього. Вірить, що ціна рятує світ від наївності.',
@@ -103,6 +111,7 @@ export const characters: Character[] = [
     house: 'Рід Фенмар',
     realm: 'Найтфен',
     role: 'Правитель',
+    portrait: '/assets/characters/fenmar-king.jpg',
     isPov: true,
     description:
       'Носій Корони Затемнення — якщо вірити єдиному сухому листу в Найтфену. Править з трона, який бачать лише ті, хто вже втратив шлях. Пам’ятає за всіх.',
@@ -115,6 +124,7 @@ export const characters: Character[] = [
     house: 'Рід Етель',
     realm: 'Грімхольд',
     role: 'Загадка',
+    portrait: '/assets/characters/nameless-king.jpg',
     isPov: true,
     description:
       'Останній імператор Етельморну. Відмовився скластися перед Затемненням — і був замурований живим. POV з другої книги — листи зі стіни, сни, спогади. Не антагоніст — дзеркало.',
@@ -127,6 +137,7 @@ export const characters: Character[] = [
     house: 'Рада Башти',
     realm: 'Шпилес',
     role: 'Другорядний',
+    portrait: '/assets/characters/kael-merchant.jpg',
     description:
       'Купець без постійного імені — в кожній державі його кличуть інакше. Приносить контракти, звістки, борги. З’являється там, де Вежа вже підписала.',
     quote: '«Я не торгую правдою. Я торгую терміном.»',
