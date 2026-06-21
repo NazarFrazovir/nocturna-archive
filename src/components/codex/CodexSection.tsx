@@ -14,8 +14,7 @@ export function CodexSection() {
       <div className="relative mx-auto max-w-6xl">
         <h2 className="section-title">Кодекс Артефактів</h2>
         <p className="section-subtitle">
-          Реліквії, прокляття та заборонені предмети, зібрані Чорнильниками за століття.
-          Доторкнися — і предмет «прокинеться».
+          Реліквії століть. Доторкнись — предмет прокинеться.
         </p>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {artifacts.map((artifact, i) => (

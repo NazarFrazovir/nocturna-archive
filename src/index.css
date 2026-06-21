@@ -137,6 +137,18 @@ h4 {
   font-size: 1.25rem;
 }
 
+.rpg-map-frame {
+  background: linear-gradient(145deg, rgba(18, 16, 26, 0.95), rgba(10, 8, 15, 0.98));
+  border: 1px solid rgba(201, 162, 39, 0.18);
+  box-shadow:
+    inset 0 0 80px rgba(0, 0, 0, 0.6),
+    0 0 50px rgba(201, 162, 39, 0.04);
+}
+
+.rpg-map-inner {
+  background: radial-gradient(ellipse at 45% 40%, #14101f 0%, #08060e 100%);
+}
+
 .section-title::after {
   content: "";
   display: block;

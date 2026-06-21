@@ -34,26 +34,16 @@ export function RealmCard({ realm, index, isSelected, onSelect }: Props) {
       </div>
 
       <div className="relative z-10">
-        <div className="mb-3 flex items-center justify-between">
-          <span className="font-heading text-2xl text-ember">{realm.symbol}</span>
+        <div className="mb-2 flex items-center justify-between">
+          <span className="font-heading text-[10px] tracking-widest text-mist/50">{realm.stateType}</span>
           <span className="rounded-full border border-blood/30 bg-blood/10 px-3 py-0.5 font-heading text-[10px] tracking-wider text-blood">
             {realm.curse}
           </span>
         </div>
 
-        <p className="font-heading text-[10px] tracking-widest text-mist/50">{realm.stateType}</p>
         <h3 className="font-heading text-xl tracking-wide">{realm.name}</h3>
+        <p className="mt-1 font-heading text-xs tracking-wider text-mist/40">{realm.capital}</p>
         <p className="mt-3 font-body text-base leading-relaxed text-mist">{realm.description}</p>
-
-        <motion.div
-          initial={false}
-          animate={{ height: isSelected ? 'auto' : 0, opacity: isSelected ? 1 : 0 }}
-          className="overflow-hidden"
-        >
-          <p className="mt-3 border-t border-ember/10 pt-3 font-body text-sm italic leading-relaxed text-mist/80">
-            {realm.extendedLore}
-          </p>
-        </motion.div>
 
         <div className="mt-4 flex items-center gap-1">
           {Array.from({ length: 5 }, (_, i) => (
@@ -64,7 +54,6 @@ export function RealmCard({ realm, index, isSelected, onSelect }: Props) {
               }`}
             />
           ))}
-          <span className="ml-2 font-heading text-[10px] tracking-wider text-mist/50">НЕБЕЗПЕКА</span>
         </div>
       </div>
     </motion.article>

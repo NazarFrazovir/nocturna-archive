@@ -44,7 +44,7 @@ export function InkkeepersSection() {
       <div className="relative mx-auto max-w-6xl">
         <h2 className="section-title">Орден Чорнильників</h2>
         <p className="section-subtitle">
-          Хранителі забутого. Ми не творимо історію — ми рятуємо її від забуття.
+          Хранителі забутого. Історію не пишемо — рятуємо від стирання.
         </p>
 
         <div className="grid items-center gap-12 lg:grid-cols-2">
@@ -56,16 +56,14 @@ export function InkkeepersSection() {
             className="space-y-6"
           >
             <p className="font-body text-lg leading-relaxed text-mist">
-              Орден засновано в 401 році Ери Затемнення, коли імператорський архів згорів
-              разом із половиною правди. Тринадцять вчених поклялися чорнилом і кров’ю:
-              жодне ім’я, жодна подія, жодне пророцтво не буде стерто вдруге.
+              401 рік. Імператорський архів згорів — разом із половиною правди.
+              Тринадцять вчених скляли клятву: нічого не буде стерто вдруге.
             </p>
             <p className="font-body text-lg leading-relaxed text-mist">
-              Архів Ноктурни — не бібліотека. Це живий організм пам’яті. Кожна сторінка
-              дихає. Кожен артефакт чекає. Кожне прокляття — чекає на читача.
+              Архів Ноктурни — не бібліотека. Пам’ять, що дихає. Сторінка чекає. Артефакт чекає. Прокляття — теж.
             </p>
             <blockquote className="border-l-2 border-ember/30 pl-6 font-body text-xl italic text-ember/80">
-              «Ми пишемо не для живих. Ми пишемо для тих, хто прийде після завіси.»
+              «Пишемо не для живих — для тих, хто прийде після завіси.»
               <footer className="mt-2 font-heading text-xs tracking-widest text-mist/50 not-italic">
                 — Перший Чорнильник, Еліас Попіловий
               </footer>

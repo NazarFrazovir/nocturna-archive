@@ -14,8 +14,8 @@ export function Footer() {
           ОРДЕН ЧОРНИЛЬНИКІВ
         </p>
         <blockquote className="mt-6 font-body text-xl italic leading-relaxed text-mist">
-          «Ми не пишемо історію — ми зберігаємо те, що історія намагається поховати.
-          Кожна сторінка цього архіву — це пам’ять, яку світ забув першим.»
+          «Історію не пишемо — зберігаємо те, що вона намагається поховати.
+          Кожна сторінка — пам’ять, яку світ забув першим.»
         </blockquote>
         <p className="mt-8 font-heading text-xs tracking-widest text-mist/50">
           АРХІВ НОКТУРНИ · ЕТЕЛЬМОРН · ВСІ ПРАВА ПОХОВАНІ

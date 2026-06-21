@@ -60,7 +60,7 @@ export function HeroPortal() {
           transition={{ duration: 0.8, delay: 1 }}
           className="mx-auto mt-6 max-w-xl font-body text-xl italic text-mist md:text-2xl"
         >
-          Сім проклятих держав. Сотні забутих істин. Одна завіса між тобою і тим, що світ поховав.
+          Сім держав за завісою. Забуті істини. Один крок — і ти вже в хроніці.
         </motion.p>
 
         <motion.div

@@ -54,7 +54,7 @@ export function OracleSection() {
       <div className="relative mx-auto max-w-3xl text-center">
         <h2 className="section-title">Оракул Попелу</h2>
         <p className="section-subtitle">
-          Запитай — і попіл відповість. Але пам’ятай: пророцтво, почуте вголос, стає долею.
+          Запитай. Попіл відповість. Пророцтво вголос — доля написана.
         </p>
 
         <div className="relative mx-auto mt-8 aspect-square w-64 md:w-80">

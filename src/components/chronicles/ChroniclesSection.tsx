@@ -69,7 +69,7 @@ export function ChroniclesSection() {
       <div className="px-6 pt-24 md:pt-32">
         <h2 className="section-title">Хроніки Падіння</h2>
         <p className="section-subtitle">
-          Від Першої Печаті до сьогодні — історія Етельморну, яку намагалися стерти.
+          Від Першої Печаті до сьогодні. Історія, яку стерли — ми зберегли.
         </p>
       </div>
 
