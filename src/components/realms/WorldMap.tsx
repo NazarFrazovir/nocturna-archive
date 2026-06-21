@@ -200,12 +200,26 @@ export function WorldMap({ selected, onSelect }: Props) {
           <h3 className="font-heading text-lg tracking-[0.2em] text-ember/70 md:text-xl">ЕТЕЛЬМОРН</h3>
         </div>
 
-        <div className="rpg-map-inner relative mx-3 mb-3 mt-2 md:mx-5 md:mb-5">
+        <div className="rpg-map-inner map-parchment relative mx-3 mb-3 mt-2 md:mx-5 md:mb-5">
+          <div className="map-parchment-base pointer-events-none absolute inset-0 z-0" aria-hidden="true" />
+          <div className="map-parchment-grain pointer-events-none absolute inset-0 z-[5]" aria-hidden="true" />
+          <div className="map-parchment-stains pointer-events-none absolute inset-0 z-[5]" aria-hidden="true" />
+          <div className="map-parchment-burn pointer-events-none absolute inset-0 z-[6]" aria-hidden="true" />
+          <div className="map-parchment-crease pointer-events-none absolute inset-0 z-[6]" aria-hidden="true" />
           <div className="map-fog-overlay pointer-events-none absolute inset-0 z-10" />
           <div className="map-vignette pointer-events-none absolute inset-0 z-10" />
 
-          <svg viewBox="0 0 1000 600" className="relative z-0 w-full" aria-label="Карта Етельморну">
+          <svg viewBox="0 0 1000 600" className="map-parchment-svg relative z-[2] w-full" aria-label="Карта Етельморну">
             <defs>
+              <filter id="paperNoise" x="0%" y="0%" width="100%" height="100%">
+                <feTurbulence type="fractalNoise" baseFrequency="0.75" numOctaves="4" seed="8" result="noise" />
+                <feColorMatrix type="saturate" values="0" in="noise" result="gray" />
+                <feBlend in="SourceGraphic" in2="gray" mode="multiply" />
+              </filter>
+              <pattern id="fiberPattern" width="4" height="4" patternUnits="userSpaceOnUse">
+                <rect width="4" height="4" fill="transparent" />
+                <path d="M0,4 L4,0" stroke="rgba(80,60,30,0.04)" strokeWidth="0.5" />
+              </pattern>
               {realms.map((r) => (
                 <linearGradient key={r.id} id={`grad-${r.id}`} x1="0%" y1="0%" x2="60%" y2="100%">
                   <stop offset="0%" stopColor={r.gradientFrom} />
@@ -217,9 +231,17 @@ export function WorldMap({ selected, onSelect }: Props) {
                 <stop offset="100%" stopColor="rgba(139,38,53,0.12)" />
               </linearGradient>
               <radialGradient id="seaGrad" cx="50%" cy="45%" r="65%">
-                <stop offset="0%" stopColor="#12101c" />
-                <stop offset="55%" stopColor="#08061a" />
-                <stop offset="100%" stopColor="#030208" />
+                <stop offset="0%" stopColor="#1e1810" />
+                <stop offset="55%" stopColor="#12100c" />
+                <stop offset="100%" stopColor="#0a0806" />
+              </radialGradient>
+              <radialGradient id="stain1" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="rgba(90,60,25,0.18)" />
+                <stop offset="100%" stopColor="transparent" />
+              </radialGradient>
+              <radialGradient id="stain2" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stopColor="rgba(50,30,15,0.22)" />
+                <stop offset="100%" stopColor="transparent" />
               </radialGradient>
               <pattern id="waves" width="40" height="12" patternUnits="userSpaceOnUse">
                 <path
@@ -244,7 +266,11 @@ export function WorldMap({ selected, onSelect }: Props) {
               </filter>
             </defs>
 
-            {/* Ocean */}
+            {/* Parchment undertone */}
+            <rect width="1000" height="600" fill="#2a2218" />
+            <rect width="1000" height="600" fill="url(#fiberPattern)" />
+
+            {/* Ocean — ink wash on parchment */}
             <rect width="1000" height="600" fill="url(#seaGrad)" />
             <rect width="1000" height="600" fill="url(#waves)" />
             <rect width="1000" height="600" fill="url(#mapGrid)" />
@@ -267,8 +293,8 @@ export function WorldMap({ selected, onSelect }: Props) {
             {/* Continent land base */}
             <path
               d={continentCoast}
-              fill="#141018"
-              stroke="rgba(201,162,39,0.15)"
+              fill="#1a1610"
+              stroke="rgba(120,90,50,0.35)"
               strokeWidth="1.5"
               filter="url(#coastGlow)"
             />
@@ -394,9 +420,39 @@ export function WorldMap({ selected, onSelect }: Props) {
             <OrnateCorner x={30} y={570} rotate={-90} />
             <OrnateCorner x={970} y={570} rotate={180} />
 
+            {/* Ink stains on parchment */}
+            <ellipse cx="130" cy="470" rx="95" ry="70" fill="url(#stain1)" opacity="0.7" />
+            <ellipse cx="870" cy="130" rx="65" ry="50" fill="url(#stain2)" opacity="0.6" />
+            <ellipse cx="750" cy="520" rx="55" ry="40" fill="url(#stain1)" opacity="0.5" />
+            <ellipse cx="200" cy="100" rx="40" ry="30" fill="rgba(60,35,15,0.12)" />
+            <ellipse cx="500" cy="550" rx="120" ry="35" fill="rgba(40,25,10,0.1)" />
+
+            {/* Ink blot */}
+            <path
+              d="M 60,300 C 75,285 90,295 85,310 C 80,325 65,320 55,308 C 50,298 55,292 60,300 Z"
+              fill="rgba(30,20,10,0.15)"
+            />
+            <path
+              d="M 920,380 C 935,365 948,378 940,395 C 930,410 915,402 908,388 C 905,375 912,368 920,380 Z"
+              fill="rgba(25,15,8,0.18)"
+            />
+
+            {/* Paper grain overlay */}
+            <rect
+              width="1000"
+              height="600"
+              fill="rgba(180,150,90,0.04)"
+              filter="url(#paperNoise)"
+              opacity="0.6"
+              style={{ mixBlendMode: 'multiply' }}
+            />
+
+            {/* Sepia wash */}
+            <rect width="1000" height="600" fill="rgba(160,120,60,0.06)" />
+
             {/* Inner map border */}
-            <rect x="20" y="20" width="960" height="560" fill="none" stroke="rgba(201,162,39,0.12)" strokeWidth="1" rx="2" />
-            <rect x="26" y="26" width="948" height="548" fill="none" stroke="rgba(201,162,39,0.06)" strokeWidth="0.5" rx="1" />
+            <rect x="20" y="20" width="960" height="560" fill="none" stroke="rgba(120,90,50,0.2)" strokeWidth="1" rx="2" />
+            <rect x="26" y="26" width="948" height="548" fill="none" stroke="rgba(120,90,50,0.08)" strokeWidth="0.5" rx="1" />
           </svg>
         </div>
 
